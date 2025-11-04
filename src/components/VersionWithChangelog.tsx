@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { db } from "@/lib/firebase";
+import { doc, getDoc } from "firebase/firestore";
 import { VERSION } from "../app/config/version";
 import { CHANGELOG } from "../app/config/changelog";
 import {
@@ -20,9 +22,54 @@ export default function VersionWithChangelog() {
   const [copied, setCopied] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [currentPage, setCurrentPage] = useState(0);
+  const [version, setVersion] = useState(VERSION);
+  const [changelog, setChangelog] = useState(CHANGELOG);
 
   useEffect(() => {
     setMounted(true);
+    // Load version and changelog from Firestore
+    const loadVersionData = async () => {
+      try {
+        const versionDoc = await getDoc(doc(db, "appSettings", "version"));
+        if (versionDoc.exists()) {
+          const data = versionDoc.data();
+          if (data?.version) {
+            setVersion(data.version);
+          }
+          // If there's a changelog in Firestore, update it
+          if (data?.changelog && data.changelog.length > 0) {
+            // Create a new changelog entry with current version
+            const newEntry = {
+              version: data.version,
+              date: new Date(data.updatedAt.toDate()).toLocaleDateString(
+                "en-US",
+                {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                }
+              ),
+              changes: data.changelog,
+            };
+            // Add to existing changelog if not already present
+            const existingIndex = CHANGELOG.findIndex(
+              (log) => log.version === data.version
+            );
+            if (existingIndex === -1) {
+              setChangelog([newEntry, ...CHANGELOG]);
+            } else {
+              const updated = [...CHANGELOG];
+              updated[existingIndex] = newEntry;
+              setChangelog(updated);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Error loading version data:", error);
+      }
+    };
+
+    loadVersionData();
   }, []);
 
   // Reset to first page when modal opens
@@ -61,12 +108,14 @@ export default function VersionWithChangelog() {
   }, [showConfirm, showChangelog]);
 
   const handleCopy = async () => {
-    const text = CHANGELOG.map(
-      (log) =>
-        `${log.version} (${log.date})\n${log.changes
-          .map((c) => `• ${c}`)
-          .join("\n")}\n`
-    ).join("\n");
+    const text = changelog
+      .map(
+        (log) =>
+          `${log.version} (${log.date})\n${log.changes
+            .map((c) => `• ${c}`)
+            .join("\n")}\n`
+      )
+      .join("\n");
     await navigator.clipboard.writeText(text);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
@@ -76,7 +125,7 @@ export default function VersionWithChangelog() {
     const content = `
       <html>
         <head>
-          <title>GMP Changelog - ${VERSION}</title>
+          <title>GMP Changelog - ${version}</title>
           <style>
             body { font-family: Arial, sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; }
             h1 { color: #0ea5e9; border-bottom: 2px solid #0ea5e9; padding-bottom: 10px; }
@@ -91,8 +140,9 @@ export default function VersionWithChangelog() {
         </head>
         <body>
           <h1>GMP Version History</h1>
-          ${CHANGELOG.map(
-            (log) => `
+          ${changelog
+            .map(
+              (log) => `
             <div class="version">
               <div class="version-header">
                 <span class="version-number">${log.version}</span>
@@ -103,7 +153,8 @@ export default function VersionWithChangelog() {
               </ul>
             </div>
           `
-          ).join("")}
+            )
+            .join("")}
         </body>
       </html>
     `;
@@ -117,7 +168,7 @@ export default function VersionWithChangelog() {
   };
 
   const handleNextPage = () => {
-    if (currentPage < CHANGELOG.length - 1) {
+    if (currentPage < changelog.length - 1) {
       setCurrentPage(currentPage + 1);
     }
   };
@@ -171,8 +222,8 @@ export default function VersionWithChangelog() {
   );
 
   const ChangelogModal = () => {
-    const currentLog = CHANGELOG[currentPage];
-    const totalPages = CHANGELOG.length;
+    const currentLog = changelog[currentPage];
+    const totalPages = changelog.length;
 
     return (
       <div
@@ -246,7 +297,7 @@ export default function VersionWithChangelog() {
 
               {/* Pagination Dots */}
               <div className="flex items-center gap-1.5 md:gap-2">
-                {CHANGELOG.map((_, idx) => (
+                {changelog.map((_, idx) => (
                   <button
                     key={idx}
                     onClick={() => setCurrentPage(idx)}
@@ -311,10 +362,10 @@ export default function VersionWithChangelog() {
     <>
       <button
         onClick={() => setShowConfirm(true)}
-        className="text-sm text-zinc-300 hover:text-sky-400 transition-colors underline decoration-dotted font-medium"
+        className="text-sm light:text-gray-600 dark:text-zinc-300 light:hover:text-blue-600 dark:hover:text-sky-400 transition-colors underline decoration-dotted font-medium"
         aria-label="View version changelog"
       >
-        {VERSION}
+        {version}
       </button>
 
       {mounted && showConfirm && createPortal(<ConfirmModal />, document.body)}

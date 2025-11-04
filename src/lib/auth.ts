@@ -12,6 +12,9 @@ import {
 import { auth } from "./firebase";
 import { toast } from "sonner";
 
+// Export auth for use in other components
+export { auth };
+
 const ALLOWED_EMAIL = "gauravpatil9262@gmail.com";
 
 // Google Sign-In

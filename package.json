@@ -1,6 +1,6 @@
 {
   "name": "gaurav-management-panel",
-  "version": "0.1.2",
+  "version": "2.00",
   "private": true,
   "scripts": {
     "dev": "next dev",

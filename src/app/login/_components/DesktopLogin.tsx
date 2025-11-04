@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import BrandLogo from "../../../components/BrandLogo";
+import Breadcrumb from "../../../components/Breadcrumb";
 import { motion, useReducedMotion } from "framer-motion";
 import { signInWithGoogle } from "../../../lib/auth";
 import Footer from "../../../components/Footer";
@@ -43,7 +44,8 @@ export default function DesktopLogin() {
   };
 
   return (
-    <div className="min-h-svh flex flex-col">
+    <div className="min-h-svh flex flex-col light:bg-gray-50 dark:bg-surface">
+      <Breadcrumb />
       <div className="flex-1 flex flex-col lg:flex-row">
         {/* Left Branding Panel */}
         <div className="hidden lg:flex w-1/2 items-center justify-center bg-linear-to-br from-sky-600 via-indigo-600 to-violet-700 p-12 relative overflow-hidden">

@@ -1,13 +1,14 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { LogOut, User as UserIcon, Settings } from "lucide-react";
+import { LogOut, User as UserIcon, Settings, Moon, Sun } from "lucide-react";
 import BrandLogo from "./BrandLogo";
 import NotificationBell from "./NotificationBell";
 import { signOut } from "@/lib/auth";
 import { auth } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useTheme } from "../contexts/ThemeContext";
 
 interface NavbarProps {
   showNotifications?: boolean;
@@ -19,6 +20,7 @@ export default function Navbar({ showNotifications = true }: NavbarProps) {
   const [user, setUser] = useState<any>(null);
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const { theme, toggleTheme } = useTheme();
 
   // Update clock every second
   useEffect(() => {
@@ -77,7 +79,7 @@ export default function Navbar({ showNotifications = true }: NavbarProps) {
   };
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-white/5 bg-[#0b1220]/95 backdrop-blur-xl shadow-lg shadow-black/20">
+    <header className="sticky top-0 z-50 w-full border-b light:border-gray-200 dark:border-white/5 light:bg-white/95 dark:bg-[#0b1220]/95 backdrop-blur-xl light:shadow-sm dark:shadow-lg dark:shadow-black/20">
       <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Left Section - Logo and Brand Name */}
@@ -87,7 +89,7 @@ export default function Navbar({ showNotifications = true }: NavbarProps) {
               <span className="font-semibold text-sm sm:text-base lg:text-lg bg-linear-to-r from-[#6EE7B7] to-[#3B82F6] bg-clip-text text-transparent whitespace-nowrap">
                 Gaurav Management
               </span>
-              <span className="hidden sm:block text-xs text-gray-400">
+              <span className="hidden sm:block text-xs light:text-gray-600 dark:text-gray-400">
                 Portfolio
               </span>
             </div>
@@ -95,17 +97,32 @@ export default function Navbar({ showNotifications = true }: NavbarProps) {
 
           {/* Middle Section - Live Clock (IST) */}
           <div className="hidden md:flex items-center justify-center absolute left-1/2 transform -translate-x-1/2">
-            <div className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white/5 border border-white/10">
+            <div className="flex items-center gap-2 px-4 py-2 rounded-lg light:bg-gray-100 dark:bg-white/5 border light:border-gray-200 dark:border-white/10">
               <div className="w-2 h-2 rounded-full bg-green-400 animate-pulse"></div>
-              <span className="text-sm font-mono text-gray-300">
+              <span className="text-sm font-mono light:text-gray-700 dark:text-gray-300">
                 {currentTime}
-                <span className="text-xs text-gray-500 ml-1">IST</span>
+                <span className="text-xs light:text-gray-500 dark:text-gray-500 ml-1">
+                  IST
+                </span>
               </span>
             </div>
           </div>
 
           {/* Right Section - Notifications and Profile */}
-          <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+            {/* Theme Toggle Button */}
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg light:bg-gray-100 dark:bg-white/5 border light:border-gray-200 dark:border-white/10 light:hover:bg-gray-200 dark:hover:bg-white/10 transition-all duration-200"
+              aria-label="Toggle theme"
+            >
+              {theme === "dark" ? (
+                <Sun className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-400" />
+              ) : (
+                <Moon className="w-4 h-4 sm:w-5 sm:h-5 text-slate-700" />
+              )}
+            </button>
+
             {showNotifications && user && <NotificationBell />}
 
             {user && (
