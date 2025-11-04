@@ -21,6 +21,7 @@ export default function DashboardPage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [tabLoaded, setTabLoaded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
 
   // Detect mobile screen size
   useEffect(() => {
@@ -39,6 +40,7 @@ export default function DashboardPage() {
       setLoading(false);
       if (user) {
         setAuthorized(true);
+        setCurrentUserId(user.uid); // Store user ID
         // Load last active tab from Firestore
         try {
           const docRef = doc(db, "userPreferences", user.uid);
@@ -61,9 +63,9 @@ export default function DashboardPage() {
   // Save active tab to Firestore whenever it changes
   useEffect(() => {
     const saveActiveTab = async () => {
-      if (authorized && tabLoaded) {
+      if (authorized && tabLoaded && currentUserId) {
         try {
-          const docRef = doc(db, "userPreferences", "currentUser");
+          const docRef = doc(db, "userPreferences", currentUserId); // Use actual user ID
           await setDoc(docRef, { lastActiveTab: activeTab }, { merge: true });
         } catch (error) {
           console.error("Error saving active tab:", error);
@@ -72,7 +74,7 @@ export default function DashboardPage() {
     };
 
     saveActiveTab();
-  }, [activeTab, authorized, tabLoaded]);
+  }, [activeTab, authorized, tabLoaded, currentUserId]);
 
   if (loading) {
     return (

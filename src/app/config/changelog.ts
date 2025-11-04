@@ -24,37 +24,9 @@ export interface VersionLog {
 
 export const CHANGELOG: VersionLog[] = [
   {
-    version: "v0.1.2",
-    date: "2025-11-03",
-    changes: [
-      "Added pagination to version changelog modal",
-      "Implemented slider navigation with arrows",
-      "Added keyboard navigation (left/right arrow keys)",
-      "Reduced font sizes on mobile for better readability",
-      "Fixed modal height to prevent expansion with many logs",
-      "Made version system fully dynamic across all files",
-    ],
-  },
-  {
-    version: "v0.1.1",
-    date: "2025-11-03",
-    changes: [
-      "Enhanced version changelog display",
-      "Added pagination dots for easy navigation",
-      "Improved mobile responsiveness",
-      "Added visual indicators for active version",
-    ],
-  },
-  {
-    version: "v0.1.0",
-    date: "2025-11-03",
-    changes: [
-      "Initial release",
-      "Firebase authentication integration",
-      "Login page with desktop and mobile layouts",
-      "Dashboard skeleton with navbar and footer",
-      "Version management system",
-    ],
+    version: "v0.0.0",
+    date: "2025-11-04",
+    changes: ["Initial setup", "Application base structure"],
   },
   // Add new versions here - newest first
 ];

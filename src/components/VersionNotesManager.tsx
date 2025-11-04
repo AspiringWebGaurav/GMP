@@ -19,6 +19,65 @@ interface VersionHistory {
   createdAt: Date;
 }
 
+// Version shortcuts
+const VERSION_SHORTCUTS = [
+  {
+    label: "Patch",
+    format: (current: string) => incrementVersion(current, "patch"),
+    icon: "🔧",
+    desc: "Bug fixes",
+  },
+  {
+    label: "Minor",
+    format: (current: string) => incrementVersion(current, "minor"),
+    icon: "✨",
+    desc: "New features",
+  },
+  {
+    label: "Major",
+    format: (current: string) => incrementVersion(current, "major"),
+    icon: "🚀",
+    desc: "Breaking changes",
+  },
+];
+
+// Changelog shortcuts
+const CHANGELOG_SHORTCUTS = [
+  "Added new feature",
+  "Fixed bug in",
+  "Updated",
+  "Improved performance",
+  "Enhanced UI/UX",
+  "Refactored code",
+  "Security patch",
+];
+
+function incrementVersion(
+  current: string,
+  type: "major" | "minor" | "patch"
+): string {
+  // Get the latest version from current or default to v0.0.0
+  if (!current) current = "v0.0.0";
+
+  const match = current.match(/v?(\d+)\.(\d+)\.(\d+)/);
+  if (!match) return "v0.0.1";
+
+  let [, major, minor, patch] = match.map(Number);
+
+  if (type === "major") {
+    major++;
+    minor = 0;
+    patch = 0;
+  } else if (type === "minor") {
+    minor++;
+    patch = 0;
+  } else {
+    patch++;
+  }
+
+  return `v${major}.${minor}.${patch}`;
+}
+
 export default function VersionNotesManager() {
   const [version, setVersion] = useState("");
   const [changelogInput, setChangelogInput] = useState("");
@@ -26,6 +85,7 @@ export default function VersionNotesManager() {
   const [history, setHistory] = useState<VersionHistory[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [latestVersion, setLatestVersion] = useState("v0.0.0");
 
   useEffect(() => {
     loadHistory();
@@ -45,6 +105,13 @@ export default function VersionNotesManager() {
         createdAt: docSnap.data().createdAt?.toDate() || new Date(),
       })) as VersionHistory[];
       setHistory(historyData);
+
+      // Set latest version from database
+      if (historyData.length > 0) {
+        setLatestVersion(historyData[0].version);
+      } else {
+        setLatestVersion("v0.0.0");
+      }
     } catch (error) {
       console.error("Error:", error);
       toast.error("Failed to load history");
@@ -88,16 +155,37 @@ export default function VersionNotesManager() {
         changelog: changelog,
         createdAt: Timestamp.now(),
       });
-      toast.success("Version saved!");
+      toast.success("Version saved! Refreshing...");
       setVersion("");
       setChangelog([]);
-      loadHistory();
+      await loadHistory(); // Reload to get fresh data
+
+      // Trigger hard refresh after a short delay to show success message
+      setTimeout(() => {
+        window.location.href = window.location.href;
+      }, 1000);
     } catch (error) {
       console.error("Error:", error);
       toast.error("Failed to save");
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleVersionShortcut = (type: "major" | "minor" | "patch") => {
+    // Use latestVersion from state (synced with database)
+    const newVersion = incrementVersion(latestVersion, type);
+
+    // Check if this version already exists
+    if (!isVersionExists(newVersion)) {
+      setVersion(newVersion);
+    } else {
+      toast.error("This version already exists!");
+    }
+  };
+
+  const handleChangelogShortcut = (text: string) => {
+    setChangelogInput(text);
   };
 
   if (loading) {
@@ -121,6 +209,45 @@ export default function VersionNotesManager() {
             <label className="block text-sm font-medium light:text-gray-700 dark:text-gray-300 mb-2">
               Version Number *
             </label>
+
+            {/* Version Shortcuts */}
+            <div className="flex gap-2 mb-2">
+              {VERSION_SHORTCUTS.map((shortcut) => {
+                // Use latestVersion from state (synced with database)
+                const nextVersion = shortcut.format(latestVersion);
+                const isDisabled = isVersionExists(nextVersion);
+
+                return (
+                  <button
+                    key={shortcut.label}
+                    onClick={() =>
+                      handleVersionShortcut(
+                        shortcut.label.toLowerCase() as
+                          | "major"
+                          | "minor"
+                          | "patch"
+                      )
+                    }
+                    disabled={isDisabled}
+                    className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+                      isDisabled
+                        ? "bg-gray-200 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed"
+                        : "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-900/50"
+                    }`}
+                    title={
+                      isDisabled
+                        ? `${nextVersion} already exists`
+                        : `${shortcut.desc}: ${nextVersion}`
+                    }
+                  >
+                    <span>{shortcut.icon}</span>
+                    <span>{shortcut.label}</span>
+                    <span className="text-xs opacity-70">{nextVersion}</span>
+                  </button>
+                );
+              })}
+            </div>
+
             <input
               type="text"
               value={version}
@@ -142,6 +269,20 @@ export default function VersionNotesManager() {
             <label className="block text-sm font-medium light:text-gray-700 dark:text-gray-300 mb-2">
               Changelog Items *
             </label>
+
+            {/* Changelog Shortcuts */}
+            <div className="flex flex-wrap gap-1.5 mb-2">
+              {CHANGELOG_SHORTCUTS.map((text, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleChangelogShortcut(text)}
+                  className="px-2.5 py-1 rounded-md text-xs font-medium bg-gray-100 dark:bg-gray-300 text-gray-900 dark:text-black hover:bg-gray-200 dark:hover:bg-gray-400 transition-colors"
+                >
+                  {text}
+                </button>
+              ))}
+            </div>
+
             <div className="flex gap-2">
               <input
                 type="text"

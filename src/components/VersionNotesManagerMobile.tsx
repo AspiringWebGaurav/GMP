@@ -21,6 +21,60 @@ interface VersionHistory {
   createdAt: Date;
 }
 
+// Version shortcuts
+const VERSION_SHORTCUTS = [
+  {
+    label: "Patch",
+    format: (current: string) => incrementVersion(current, "patch"),
+    icon: "🔧",
+  },
+  {
+    label: "Minor",
+    format: (current: string) => incrementVersion(current, "minor"),
+    icon: "✨",
+  },
+  {
+    label: "Major",
+    format: (current: string) => incrementVersion(current, "major"),
+    icon: "🚀",
+  },
+];
+
+// Changelog shortcuts
+const CHANGELOG_SHORTCUTS = [
+  "Added new feature",
+  "Fixed bug",
+  "Updated",
+  "Improved",
+  "Enhanced UI",
+  "Security patch",
+];
+
+function incrementVersion(
+  current: string,
+  type: "major" | "minor" | "patch"
+): string {
+  if (!current) current = "v0.0.0";
+
+  const match = current.match(/v?(\d+)\.(\d+)\.(\d+)/);
+  if (!match) return "v0.0.1";
+
+  let [, major, minor, patch] = match.map(Number);
+
+  if (type === "major") {
+    major++;
+    minor = 0;
+    patch = 0;
+  } else if (type === "minor") {
+    minor++;
+    patch = 0;
+  } else {
+    patch++;
+  }
+
+  return `v${major}.${minor}.${patch}`;
+}
+
 export default function VersionNotesManagerMobile() {
   const [version, setVersion] = useState("");
   const [changelogInput, setChangelogInput] = useState("");
@@ -28,6 +82,7 @@ export default function VersionNotesManagerMobile() {
   const [history, setHistory] = useState<VersionHistory[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [latestVersion, setLatestVersion] = useState("v0.0.0");
 
   useEffect(() => {
     loadHistory();
@@ -47,6 +102,13 @@ export default function VersionNotesManagerMobile() {
         createdAt: docSnap.data().createdAt?.toDate() || new Date(),
       })) as VersionHistory[];
       setHistory(historyData);
+
+      // Set latest version from database
+      if (historyData.length > 0) {
+        setLatestVersion(historyData[0].version);
+      } else {
+        setLatestVersion("v0.0.0");
+      }
     } catch (error) {
       console.error("Error:", error);
       toast.error("Failed to load history");
@@ -91,17 +153,37 @@ export default function VersionNotesManagerMobile() {
         createdAt: Timestamp.now(),
       };
       await addDoc(collection(db, "versionHistory"), newVersion);
-      toast.success("Version saved successfully!");
+      toast.success("Version saved! Refreshing...");
       setVersion("");
       setChangelog([]);
       setChangelogInput("");
-      await loadHistory();
+      await loadHistory(); // Reload to get fresh data
+
+      // Trigger hard refresh after a short delay to show success message
+      setTimeout(() => {
+        window.location.href = window.location.href;
+      }, 1000);
     } catch (error) {
       console.error("Error:", error);
       toast.error("Failed to save version");
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleVersionShortcut = (type: "major" | "minor" | "patch") => {
+    // Use latestVersion from state (synced with database)
+    const newVersion = incrementVersion(latestVersion, type);
+
+    if (!isVersionExists(newVersion)) {
+      setVersion(newVersion);
+    } else {
+      toast.error("Version already exists!");
+    }
+  };
+
+  const handleChangelogShortcut = (text: string) => {
+    setChangelogInput(text);
   };
 
   const versionExists = isVersionExists(version.trim());
@@ -117,6 +199,39 @@ export default function VersionNotesManagerMobile() {
             <label className="block text-xs font-medium light:text-gray-700 dark:text-gray-300 mb-1">
               Version Number *
             </label>
+
+            {/* Version Shortcuts */}
+            <div className="flex gap-1.5 mb-1.5">
+              {VERSION_SHORTCUTS.map((shortcut) => {
+                // Use latestVersion from state (synced with database)
+                const nextVersion = shortcut.format(latestVersion);
+                const isDisabled = isVersionExists(nextVersion);
+
+                return (
+                  <button
+                    key={shortcut.label}
+                    onClick={() =>
+                      handleVersionShortcut(
+                        shortcut.label.toLowerCase() as
+                          | "major"
+                          | "minor"
+                          | "patch"
+                      )
+                    }
+                    disabled={isDisabled}
+                    className={`flex items-center gap-1 px-2 py-1 rounded-md text-xs font-medium transition-all ${
+                      isDisabled
+                        ? "bg-gray-200 dark:bg-gray-800 text-gray-400 dark:text-gray-600 cursor-not-allowed opacity-50"
+                        : "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 active:scale-95"
+                    }`}
+                  >
+                    <span className="text-xs">{shortcut.icon}</span>
+                    <span className="text-xs">{nextVersion}</span>
+                  </button>
+                );
+              })}
+            </div>
+
             <input
               type="text"
               value={version}
@@ -139,6 +254,20 @@ export default function VersionNotesManagerMobile() {
             <label className="block text-xs font-medium light:text-gray-700 dark:text-gray-300 mb-1">
               Changelog Items *
             </label>
+
+            {/* Changelog Shortcuts */}
+            <div className="flex flex-wrap gap-1 mb-1.5">
+              {CHANGELOG_SHORTCUTS.map((text, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleChangelogShortcut(text)}
+                  className="px-2 py-0.5 rounded text-xs bg-gray-100 dark:bg-gray-300 text-gray-900 dark:text-black active:scale-95 transition-transform"
+                >
+                  {text}
+                </button>
+              ))}
+            </div>
+
             <div className="flex gap-1.5">
               <input
                 type="text"

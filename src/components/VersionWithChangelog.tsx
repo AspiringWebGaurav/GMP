@@ -3,7 +3,15 @@
 import React, { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { db } from "@/lib/firebase";
-import { doc, getDoc } from "firebase/firestore";
+import {
+  doc,
+  getDoc,
+  collection,
+  query,
+  orderBy,
+  limit,
+  getDocs,
+} from "firebase/firestore";
 import { VERSION } from "../app/config/version";
 import { CHANGELOG } from "../app/config/changelog";
 import {
@@ -27,21 +35,32 @@ export default function VersionWithChangelog() {
 
   useEffect(() => {
     setMounted(true);
-    // Load version and changelog from Firestore
+    // Load version and changelog from Firestore versionHistory collection
     const loadVersionData = async () => {
       try {
-        const versionDoc = await getDoc(doc(db, "appSettings", "version"));
-        if (versionDoc.exists()) {
-          const data = versionDoc.data();
-          if (data?.version) {
-            setVersion(data.version);
+        // Get latest version from versionHistory
+        const historyQuery = query(
+          collection(db, "versionHistory"),
+          orderBy("createdAt", "desc"),
+          limit(100) // Get all versions for changelog
+        );
+        const historySnapshot = await getDocs(historyQuery);
+
+        if (!historySnapshot.empty) {
+          // Get the latest version (first document)
+          const latestDoc = historySnapshot.docs[0];
+          const latestData = latestDoc.data();
+
+          if (latestData?.version) {
+            setVersion(latestData.version);
           }
-          // If there's a changelog in Firestore, update it
-          if (data?.changelog && data.changelog.length > 0) {
-            // Create a new changelog entry with current version
-            const newEntry = {
+
+          // Build changelog from all versions
+          const allVersions = historySnapshot.docs.map((doc) => {
+            const data = doc.data();
+            return {
               version: data.version,
-              date: new Date(data.updatedAt.toDate()).toLocaleDateString(
+              date: new Date(data.createdAt?.toDate()).toLocaleDateString(
                 "en-US",
                 {
                   year: "numeric",
@@ -49,20 +68,11 @@ export default function VersionWithChangelog() {
                   day: "numeric",
                 }
               ),
-              changes: data.changelog,
+              changes: data.changelog || [],
             };
-            // Add to existing changelog if not already present
-            const existingIndex = CHANGELOG.findIndex(
-              (log) => log.version === data.version
-            );
-            if (existingIndex === -1) {
-              setChangelog([newEntry, ...CHANGELOG]);
-            } else {
-              const updated = [...CHANGELOG];
-              updated[existingIndex] = newEntry;
-              setChangelog(updated);
-            }
-          }
+          });
+
+          setChangelog(allVersions);
         }
       } catch (error) {
         console.error("Error loading version data:", error);
@@ -362,10 +372,25 @@ export default function VersionWithChangelog() {
     <>
       <button
         onClick={() => setShowConfirm(true)}
-        className="text-sm light:text-gray-600 dark:text-zinc-300 light:hover:text-blue-600 dark:hover:text-sky-400 transition-colors underline decoration-dotted font-medium"
+        className="group relative inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-all duration-200 light:bg-blue-50 dark:bg-blue-500/10 light:text-blue-700 dark:text-blue-400 light:hover:bg-blue-100 dark:hover:bg-blue-500/20 light:border light:border-blue-200 dark:border dark:border-blue-500/30 hover:scale-105 active:scale-95"
         aria-label="View version changelog"
       >
-        {version}
+        <span className="light:text-blue-600 dark:text-blue-400">
+          {version}
+        </span>
+        <svg
+          className="w-3 h-3 opacity-60 group-hover:opacity-100 transition-opacity"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+          />
+        </svg>
       </button>
 
       {mounted && showConfirm && createPortal(<ConfirmModal />, document.body)}
