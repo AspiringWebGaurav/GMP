@@ -1,0 +1,40 @@
+@import "tailwindcss";
+
+:root {
+  --background: #0f1724;
+  --foreground: #e6eef8;
+  --surface: #0b1220;
+}
+
+html,
+body,
+#__next {
+  height: 100%;
+}
+
+body {
+  background: linear-gradient(180deg, #071025 0%, #071020 100%);
+  color: var(--foreground);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.bg-surface {
+  background-color: var(--surface);
+}
+.text-foreground {
+  color: var(--foreground);
+}
+
+/* utilities to help keep footer visible */
+.min-svmin-screen {
+  min-height: 100svh;
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .motion-safe {
+    animation: none !important;
+    transition: none !important;
+  }
+}
