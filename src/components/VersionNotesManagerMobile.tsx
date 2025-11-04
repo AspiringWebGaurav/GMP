@@ -9,22 +9,10 @@ import {
   orderBy,
   limit,
   getDocs,
-  doc,
-  setDoc,
   Timestamp,
 } from "firebase/firestore";
 import { toast } from "sonner";
-import {
-  Plus,
-  History,
-  ChevronLeft,
-  ChevronRight,
-  Save,
-  Sparkles,
-  Zap,
-  X,
-  Eye,
-} from "lucide-react";
+import { X } from "lucide-react";
 
 interface VersionHistory {
   id: string;
@@ -35,38 +23,17 @@ interface VersionHistory {
 
 export default function VersionNotesManagerMobile() {
   const [version, setVersion] = useState("");
-  const [customVersion, setCustomVersion] = useState("");
-  const [isCustomVersion, setIsCustomVersion] = useState(false);
   const [changelogInput, setChangelogInput] = useState("");
   const [changelog, setChangelog] = useState<string[]>([]);
   const [history, setHistory] = useState<VersionHistory[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [currentPage, setCurrentPage] = useState(0);
-  const [activeView, setActiveView] = useState<"form" | "history">("form");
-
-  // Version shortcuts for quick selection
-  const versionShortcuts = [
-    { label: "Patch", prefix: "0.0.", description: "Bug fixes", icon: "🔧" },
-    { label: "Minor", prefix: "0.", description: "New features", icon: "✨" },
-    { label: "Major", prefix: "", description: "Breaking changes", icon: "🚀" },
-  ];
-
-  // Common changelog suggestions
-  const changelogSuggestions = [
-    "Added new feature",
-    "Fixed bug in",
-    "Improved performance",
-    "Updated UI/UX",
-    "Enhanced security",
-    "Optimized code",
-  ];
 
   useEffect(() => {
-    loadData();
+    loadHistory();
   }, []);
 
-  const loadData = async () => {
+  const loadHistory = async () => {
     try {
       const historyQuery = query(
         collection(db, "versionHistory"),
@@ -79,37 +46,19 @@ export default function VersionNotesManagerMobile() {
         ...docSnap.data(),
         createdAt: docSnap.data().createdAt?.toDate() || new Date(),
       })) as VersionHistory[];
-
       setHistory(historyData);
-
-      if (historyData.length > 0) {
-        const latest = historyData[0];
-        const versionParts = latest.version.replace("v", "").split(".");
-        const patch = parseInt(versionParts[2] || "0") + 1;
-        setVersion(`v${versionParts[0]}.${versionParts[1]}.${patch}`);
-      } else {
-        setVersion("v0.1.0");
-      }
     } catch (error) {
-      console.error("Error loading version data:", error);
-      toast.error("Failed to load version data");
+      console.error("Error:", error);
+      toast.error("Failed to load history");
     } finally {
       setLoading(false);
     }
   };
 
-  const addChangelogItem = (item: string) => {
-    if (item.trim() && !changelog.includes(item.trim())) {
-      setChangelog([...changelog, item.trim()]);
+  const addChangelogItem = () => {
+    if (changelogInput.trim()) {
+      setChangelog([...changelog, changelogInput.trim()]);
       setChangelogInput("");
-    }
-  };
-
-  const handleChangelogKeyPress = (
-    e: React.KeyboardEvent<HTMLInputElement>
-  ) => {
-    if (e.key === "Enter" && changelogInput.trim()) {
-      addChangelogItem(changelogInput);
     }
   };
 
@@ -117,379 +66,204 @@ export default function VersionNotesManagerMobile() {
     setChangelog(changelog.filter((_, i) => i !== index));
   };
 
-  const getVersionToSave = () => {
-    return isCustomVersion && customVersion.trim()
-      ? customVersion.trim()
-      : version;
+  const isVersionExists = (ver: string) => {
+    return history.some(
+      (item) => item.version.toLowerCase() === ver.toLowerCase()
+    );
   };
 
-  const saveVersion = async () => {
-    const versionToSave = getVersionToSave();
-    if (!versionToSave.trim()) {
-      toast.error("Please enter a version number");
-      return;
-    }
+  const isSaveDisabled = () => {
+    return (
+      !version.trim() ||
+      changelog.length === 0 ||
+      isVersionExists(version.trim()) ||
+      saving
+    );
+  };
 
-    if (changelog.length === 0) {
-      toast.error("Please add at least one changelog item");
-      return;
-    }
-
+  const handleSave = async () => {
+    if (isSaveDisabled()) return;
     setSaving(true);
     try {
-      const versionData = {
-        version: versionToSave,
-        changelog: changelog,
+      const newVersion = {
+        version: version.trim(),
+        changelog,
         createdAt: Timestamp.now(),
       };
-
-      await addDoc(collection(db, "versionHistory"), versionData);
-
-      const appSettingsRef = doc(db, "appSettings", "version");
-      await setDoc(appSettingsRef, { currentVersion: versionToSave });
-
-      const response = await fetch("/api/update-version", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ version: versionToSave }),
-      });
-
-      if (!response.ok) throw new Error("Failed to update package.json");
-
-      toast.success(`Version ${versionToSave} saved successfully!`);
+      await addDoc(collection(db, "versionHistory"), newVersion);
+      toast.success("Version saved successfully!");
+      setVersion("");
       setChangelog([]);
-      await loadData();
+      setChangelogInput("");
+      await loadHistory();
     } catch (error) {
-      console.error("Error saving version:", error);
+      console.error("Error:", error);
       toast.error("Failed to save version");
     } finally {
       setSaving(false);
     }
   };
 
-  const loadFromHistory = (item: VersionHistory) => {
-    setVersion(item.version);
-    setChangelog(item.changelog);
-    setIsCustomVersion(false);
-    setActiveView("form");
-    toast.success(`Loaded version ${item.version}`);
-  };
-
-  const handlePrevPage = () => {
-    if (currentPage > 0) setCurrentPage(currentPage - 1);
-  };
-
-  const handleNextPage = () => {
-    const maxPage = Math.ceil(history.length / 5) - 1;
-    if (currentPage < maxPage) setCurrentPage(currentPage + 1);
-  };
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  const historyPerPage = 5;
-  const currentHistoryItems = history.slice(
-    currentPage * historyPerPage,
-    (currentPage + 1) * historyPerPage
-  );
+  const versionExists = isVersionExists(version.trim());
 
   return (
-    <div className="h-full flex flex-col">
-      {/* Mobile Tab Switcher */}
-      <div className="flex gap-2 mb-4 p-1 light:bg-gray-100 dark:bg-white/5 rounded-lg shrink-0">
-        <button
-          onClick={() => setActiveView("form")}
-          className={`flex-1 px-4 py-2.5 rounded-md text-sm font-semibold transition-all flex items-center justify-center gap-2 ${
-            activeView === "form"
-              ? "bg-blue-600 text-white shadow-md"
-              : "light:text-gray-700 dark:text-gray-300"
-          }`}
-        >
-          <Zap className="w-4 h-4" />
-          Create Version
-        </button>
-        <button
-          onClick={() => setActiveView("history")}
-          className={`flex-1 px-4 py-2.5 rounded-md text-sm font-semibold transition-all flex items-center justify-center gap-2 ${
-            activeView === "history"
-              ? "bg-blue-600 text-white shadow-md"
-              : "light:text-gray-700 dark:text-gray-300"
-          }`}
-        >
-          <History className="w-4 h-4" />
-          History ({history.length})
-        </button>
-      </div>
-
-      {/* Form View */}
-      {activeView === "form" && (
-        <div className="flex-1 overflow-y-auto space-y-4 pb-4">
-          {/* Version Number */}
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold light:text-gray-900 dark:text-gray-200">
-              Version Number
+    <div className="flex flex-col h-full w-full overflow-hidden">
+      <div className="shrink-0 w-full px-3 py-2 light:bg-white dark:bg-gray-900/50 border-b light:border-gray-200 dark:border-white/10">
+        <h2 className="text-sm font-semibold light:text-gray-900 dark:text-white mb-2">
+          Add New Version
+        </h2>
+        <div className="space-y-2">
+          <div>
+            <label className="block text-xs font-medium light:text-gray-700 dark:text-gray-300 mb-1">
+              Version Number *
             </label>
-
-            {!isCustomVersion ? (
-              <select
-                value={version}
-                onChange={(e) => {
-                  if (e.target.value === "custom") {
-                    setIsCustomVersion(true);
-                    setCustomVersion("");
-                  } else {
-                    setVersion(e.target.value);
-                  }
-                }}
-                className="w-full px-4 py-3 text-base rounded-lg border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-                aria-label="Version selector"
-              >
-                <option value="">Select or create version...</option>
-                {history.slice(0, 10).map((item) => (
-                  <option key={item.id} value={item.version}>
-                    {item.version} (existing)
-                  </option>
-                ))}
-                <option value="custom">✏️ Type Custom Version...</option>
-              </select>
-            ) : (
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={customVersion}
-                  onChange={(e) => setCustomVersion(e.target.value)}
-                  placeholder="e.g., v1.2.0"
-                  className="flex-1 px-4 py-3 text-base rounded-lg border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  autoFocus
-                />
-                <button
-                  onClick={() => {
-                    setIsCustomVersion(false);
-                    setCustomVersion("");
-                  }}
-                  className="px-4 py-3 rounded-lg light:bg-gray-100 dark:bg-white/5 light:text-gray-700 dark:text-gray-300 light:hover:bg-gray-200 dark:hover:bg-white/10"
-                  aria-label="Cancel custom version"
-                >
-                  ✕
-                </button>
-              </div>
+            <input
+              type="text"
+              value={version}
+              onChange={(e) => setVersion(e.target.value)}
+              placeholder="e.g., v1.0.0"
+              className={
+                "w-full px-2.5 py-1.5 text-sm rounded-md border light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white focus:outline-none focus:ring-1 " +
+                (versionExists
+                  ? "border-red-500 focus:ring-red-500"
+                  : "light:border-gray-300 dark:border-white/10 focus:ring-blue-500")
+              }
+            />
+            {versionExists && (
+              <p className="text-xs text-red-600 font-medium mt-0.5 flex items-center gap-1">
+                <span>⚠️</span> Version exists
+              </p>
             )}
-
-            {/* Quick Version Increment Buttons */}
-            <div className="grid grid-cols-3 gap-2">
-              {versionShortcuts.map((shortcut) => (
-                <button
-                  key={shortcut.label}
-                  onClick={() => {
-                    setIsCustomVersion(false);
-                    const latest =
-                      history[0]?.version.replace("v", "") || "0.0.0";
-                    const parts = latest.split(".");
-                    if (shortcut.label === "Patch") {
-                      setVersion(
-                        `v${parts[0]}.${parts[1]}.${parseInt(parts[2]) + 1}`
-                      );
-                    } else if (shortcut.label === "Minor") {
-                      setVersion(`v${parts[0]}.${parseInt(parts[1]) + 1}.0`);
-                    } else {
-                      setVersion(`v${parseInt(parts[0]) + 1}.0.0`);
-                    }
-                  }}
-                  className="px-3 py-2.5 text-sm rounded-lg light:bg-blue-50 dark:bg-blue-600/10 light:text-blue-700 dark:text-blue-400 light:hover:bg-blue-100 dark:hover:bg-blue-600/20 font-semibold border light:border-blue-200 dark:border-blue-500/30"
-                >
-                  <span className="mr-1">{shortcut.icon}</span>
-                  {shortcut.label}
-                </button>
-              ))}
-            </div>
           </div>
-
-          {/* Changelog Input */}
-          <div className="space-y-2">
-            <label className="block text-sm font-semibold light:text-gray-900 dark:text-gray-200">
-              Add Changelog Items
+          <div>
+            <label className="block text-xs font-medium light:text-gray-700 dark:text-gray-300 mb-1">
+              Changelog Items *
             </label>
-
-            <div className="flex gap-2">
+            <div className="flex gap-1.5">
               <input
                 type="text"
                 value={changelogInput}
                 onChange={(e) => setChangelogInput(e.target.value)}
-                onKeyPress={handleChangelogKeyPress}
-                placeholder="Type and press Enter..."
-                className="flex-1 px-4 py-3 text-base rounded-lg border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                onKeyPress={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    addChangelogItem();
+                  }
+                }}
+                placeholder="Add item..."
+                className="flex-1 px-2.5 py-1.5 text-sm rounded-md border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
               <button
-                onClick={() =>
-                  changelogInput.trim() && addChangelogItem(changelogInput)
-                }
+                onClick={addChangelogItem}
                 disabled={!changelogInput.trim()}
-                className="px-4 py-3 rounded-lg light:bg-blue-50 dark:bg-blue-600/10 light:text-blue-700 dark:text-blue-400 light:hover:bg-blue-100 dark:hover:bg-blue-600/20 disabled:opacity-50 font-semibold"
-                aria-label="Add changelog item"
+                className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white text-xs rounded-md font-semibold transition-colors active:scale-95"
               >
-                <Plus className="w-5 h-5" />
+                Add
               </button>
             </div>
-
-            {/* Quick Suggestions */}
-            <div className="space-y-2">
-              <p className="text-xs light:text-gray-600 dark:text-gray-400">
-                Quick shortcuts:
+          </div>
+          {changelog.length > 0 && (
+            <div className="space-y-1">
+              <p className="text-xs font-medium light:text-gray-700 dark:text-gray-300">
+                Added ({changelog.length})
               </p>
-              <div className="grid grid-cols-2 gap-2">
-                {changelogSuggestions.map((suggestion, idx) => (
-                  <button
-                    key={idx}
-                    onClick={() => addChangelogItem(suggestion)}
-                    className="px-3 py-2 text-xs rounded-lg light:bg-gray-100 dark:bg-white/5 light:text-gray-700 dark:text-gray-300 light:hover:bg-gray-200 dark:hover:bg-white/10 text-left"
+              <div className="space-y-1 max-h-24 overflow-y-auto scrollbar-thin">
+                {changelog.map((item, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center gap-1.5 p-1.5 rounded-md light:bg-blue-50 dark:bg-blue-900/20 border light:border-blue-100 dark:border-blue-800/30"
                   >
-                    + {suggestion}
-                  </button>
+                    <span className="flex-1 text-xs light:text-gray-800 dark:text-gray-200">
+                      {item}
+                    </span>
+                    <button
+                      onClick={() => removeChangelogItem(index)}
+                      className="shrink-0 w-5 h-5 flex items-center justify-center rounded bg-red-500/10 hover:bg-red-500/20 text-red-600 dark:text-red-400 transition-all active:scale-90"
+                      aria-label="Remove item"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
                 ))}
               </div>
             </div>
-
-            {/* Current Changelog */}
-            {changelog.length > 0 && (
-              <div className="space-y-2 mt-4">
-                <p className="text-sm font-semibold light:text-gray-900 dark:text-gray-200">
-                  Added ({changelog.length}):
-                </p>
-                <div className="space-y-2 max-h-48 overflow-y-auto">
-                  {changelog.map((item, index) => (
+          )}
+          <button
+            onClick={handleSave}
+            disabled={isSaveDisabled()}
+            className="w-full py-2 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 disabled:cursor-not-allowed text-white text-sm rounded-md font-semibold transition-all active:scale-[0.98]"
+          >
+            {saving ? "Saving..." : "Save Version"}
+          </button>
+        </div>
+      </div>
+      <div className="flex-1 w-full px-3 py-2 overflow-y-auto scrollbar-thin light:bg-gray-50/50 dark:bg-black/10">
+        <div className="flex items-center justify-between mb-2">
+          <h2 className="text-sm font-semibold light:text-gray-900 dark:text-white">
+            Version History
+          </h2>
+          <span className="text-xs light:text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-800 px-2 py-0.5 rounded-full">
+            {history.length}
+          </span>
+        </div>
+        {loading ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="flex flex-col items-center gap-2">
+              <div className="animate-spin rounded-full h-7 w-7 border-2 border-blue-500 border-t-transparent"></div>
+              <p className="text-xs light:text-gray-600 dark:text-gray-400">
+                Loading...
+              </p>
+            </div>
+          </div>
+        ) : history.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-8 text-center">
+            <div className="w-12 h-12 rounded-lg light:bg-gray-200 dark:bg-white/5 flex items-center justify-center mb-2">
+              <span className="text-2xl">📋</span>
+            </div>
+            <p className="text-xs font-semibold light:text-gray-700 dark:text-gray-300 mb-0.5">
+              No version history yet
+            </p>
+            <p className="text-xs light:text-gray-500 dark:text-gray-400">
+              Add your first version above
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-2 pb-2">
+            {history.map((item) => (
+              <div
+                key={item.id}
+                className="p-2.5 rounded-md light:bg-white dark:bg-gray-900/50 border light:border-gray-200 dark:border-white/10"
+              >
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="font-semibold text-sm light:text-blue-600 dark:text-blue-400">
+                    {item.version}
+                  </span>
+                  <span className="text-xs light:text-gray-500 dark:text-gray-400">
+                    {item.createdAt.toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })}
+                  </span>
+                </div>
+                <div className="space-y-1">
+                  {item.changelog.map((change, idx) => (
                     <div
-                      key={index}
-                      className="flex items-start gap-2 p-3 rounded-lg light:bg-green-50 dark:bg-green-600/10 border light:border-green-200 dark:border-green-500/20"
+                      key={idx}
+                      className="flex items-start gap-1.5 text-xs light:text-gray-700 dark:text-gray-300 leading-relaxed"
                     >
-                      <span className="light:text-green-700 dark:text-green-300 flex-1 text-sm">
-                        • {item}
+                      <span className="light:text-blue-500 dark:text-blue-400 text-xs">
+                        •
                       </span>
-                      <button
-                        onClick={() => removeChangelogItem(index)}
-                        className="text-red-500 hover:text-red-600 shrink-0"
-                        aria-label="Remove changelog item"
-                      >
-                        <X className="w-5 h-5" />
-                      </button>
+                      <span className="flex-1">{change}</span>
                     </div>
                   ))}
                 </div>
               </div>
-            )}
+            ))}
           </div>
-
-          {/* Save Button - Sticky at bottom */}
-          <button
-            onClick={saveVersion}
-            disabled={saving}
-            className="w-full px-6 py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 text-white rounded-lg font-bold transition-colors flex items-center justify-center gap-2 text-base shadow-lg sticky bottom-0"
-          >
-            {saving ? (
-              <>
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                Saving...
-              </>
-            ) : (
-              <>
-                <Save className="w-5 h-5" />
-                Save & Sync to Server
-              </>
-            )}
-          </button>
-        </div>
-      )}
-
-      {/* History View */}
-      {activeView === "history" && (
-        <div className="flex-1 flex flex-col overflow-hidden">
-          {/* History Header */}
-          <div className="flex items-center justify-between mb-4 shrink-0">
-            <h3 className="text-base font-bold light:text-gray-900 dark:text-white">
-              Version History
-            </h3>
-            {history.length > historyPerPage && (
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={handlePrevPage}
-                  disabled={currentPage === 0}
-                  className="p-2 rounded light:hover:bg-gray-100 dark:hover:bg-white/5 disabled:opacity-30"
-                  aria-label="Previous page"
-                >
-                  <ChevronLeft className="w-5 h-5" />
-                </button>
-                <span className="text-sm light:text-gray-600 dark:text-gray-400 font-medium">
-                  {currentPage + 1}/{Math.ceil(history.length / historyPerPage)}
-                </span>
-                <button
-                  onClick={handleNextPage}
-                  disabled={
-                    currentPage >=
-                    Math.ceil(history.length / historyPerPage) - 1
-                  }
-                  className="p-2 rounded light:hover:bg-gray-100 dark:hover:bg-white/5 disabled:opacity-30"
-                  aria-label="Next page"
-                >
-                  <ChevronRight className="w-5 h-5" />
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* Scrollable History */}
-          <div className="flex-1 overflow-y-auto space-y-3 pb-4">
-            {history.length === 0 ? (
-              <div className="text-center py-12 light:bg-gray-50 dark:bg-white/5 rounded-lg">
-                <Sparkles className="w-12 h-12 mx-auto mb-3 light:text-gray-400 dark:text-gray-600" />
-                <p className="text-sm font-medium light:text-gray-500 dark:text-gray-400">
-                  No version history yet
-                </p>
-              </div>
-            ) : (
-              currentHistoryItems.map((item) => (
-                <div
-                  key={item.id}
-                  onClick={() => loadFromHistory(item)}
-                  className="p-4 rounded-lg light:bg-white dark:bg-white/5 light:hover:bg-blue-50 dark:hover:bg-blue-600/10 border light:border-gray-200 dark:border-white/5 light:hover:border-blue-300 dark:hover:border-blue-500/30 shadow-sm active:scale-98 transition-all"
-                >
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-base font-bold light:text-blue-600 dark:text-blue-400">
-                      {item.version}
-                    </span>
-                    <span className="text-xs light:text-gray-500 dark:text-gray-500">
-                      {item.createdAt.toLocaleDateString("en-US", {
-                        month: "short",
-                        day: "numeric",
-                        year: "numeric",
-                      })}
-                    </span>
-                  </div>
-                  <div className="space-y-1">
-                    {item.changelog.map((change, idx) => (
-                      <p
-                        key={idx}
-                        className="text-sm light:text-gray-700 dark:text-gray-300"
-                      >
-                        • {change}
-                      </p>
-                    ))}
-                  </div>
-                  <div className="mt-3 pt-3 border-t light:border-gray-200 dark:border-white/5">
-                    <p className="text-xs light:text-blue-600 dark:text-blue-400 font-medium flex items-center gap-1">
-                      <Eye className="w-3 h-3" />
-                      Tap to load this version
-                    </p>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

@@ -9,6 +9,7 @@ import Navbar from "../../components/Navbar";
 import Footer from "../../components/Footer";
 import Breadcrumb from "../../components/Breadcrumb";
 import VersionNotesManager from "../../components/VersionNotesManager";
+import VersionNotesManagerMobile from "../../components/VersionNotesManagerMobile";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -19,6 +20,19 @@ export default function DashboardPage() {
   );
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [tabLoaded, setTabLoaded] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  // Detect mobile screen size
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+
+    return () => window.removeEventListener("resize", checkMobile);
+  }, []);
 
   useEffect(() => {
     const unsub = initAuthListener(async (user) => {
@@ -98,7 +112,7 @@ export default function DashboardPage() {
       case "version":
         return (
           <div className="h-full">
-            <VersionNotesManager />
+            {isMobile ? <VersionNotesManagerMobile /> : <VersionNotesManager />}
           </div>
         );
       case "timesheet":
