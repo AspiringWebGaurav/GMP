@@ -10,6 +10,10 @@ import Footer from "../../components/Footer";
 import Breadcrumb from "../../components/Breadcrumb";
 import VersionNotesManager from "../../components/VersionNotesManager";
 import VersionNotesManagerMobile from "../../components/VersionNotesManagerMobile";
+import TimeTracker from "../../components/TimeTracker";
+import TimeTrackerMobile from "../../components/TimeTrackerMobile";
+import ModernTimesheet from "../../components/ModernTimesheet";
+import ModernTimesheetMobile from "../../components/ModernTimesheetMobile";
 
 export default function DashboardPage() {
   const router = useRouter();
@@ -102,13 +106,8 @@ export default function DashboardPage() {
     switch (activeTab) {
       case "login":
         return (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold light:text-gray-900 dark:text-white">
-              Login/Logout
-            </h2>
-            <p className="light:text-gray-600 dark:text-gray-400">
-              Authentication management will be implemented here.
-            </p>
+          <div className="h-full flex flex-col overflow-hidden">
+            {isMobile ? <TimeTrackerMobile /> : <TimeTracker />}
           </div>
         );
       case "version":
@@ -119,13 +118,8 @@ export default function DashboardPage() {
         );
       case "timesheet":
         return (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold light:text-gray-900 dark:text-white">
-              Timesheet
-            </h2>
-            <p className="light:text-gray-600 dark:text-gray-400">
-              Timesheet tracking will be implemented here.
-            </p>
+          <div className="h-full flex flex-col overflow-hidden">
+            {isMobile ? <ModernTimesheetMobile /> : <ModernTimesheet />}
           </div>
         );
       default:
