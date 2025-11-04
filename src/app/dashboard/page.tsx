@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { initAuthListener, auth } from "../../lib/auth";
+import { initAuthListener } from "../../lib/auth";
 import { db } from "../../lib/firebase";
 import { doc, setDoc, getDoc } from "firebase/firestore";
 import Navbar from "../../components/Navbar";
@@ -19,54 +19,6 @@ export default function DashboardPage() {
   );
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [tabLoaded, setTabLoaded] = useState(false);
-  const [isFullscreenActive, setIsFullscreenActive] = useState(false);
-
-  // Listen for fullscreen status changes from Firestore with live tracking
-  useEffect(() => {
-    let isActive = true;
-
-    const checkFullscreenStatus = async () => {
-      if (!isActive) return;
-
-      const user = auth.currentUser;
-      if (user) {
-        try {
-          const docRef = doc(db, "userPreferences", user.uid);
-          const docSnap = await getDoc(docRef);
-          const isFullscreen =
-            docSnap.exists() && docSnap.data().isFullscreenActive === true;
-          setIsFullscreenActive(isFullscreen);
-        } catch (error) {
-          console.error("Error checking fullscreen status:", error);
-        }
-      }
-    };
-
-    // Initial check
-    checkFullscreenStatus();
-
-    // Poll every 500ms for very responsive tracking
-    const interval = setInterval(checkFullscreenStatus, 500);
-
-    return () => {
-      isActive = false;
-      clearInterval(interval);
-    };
-  }, []);
-
-  // Manual clear function
-  const clearFullscreenLock = async () => {
-    const user = auth.currentUser;
-    if (user) {
-      try {
-        const docRef = doc(db, "userPreferences", user.uid);
-        await setDoc(docRef, { isFullscreenActive: false }, { merge: true });
-        setIsFullscreenActive(false);
-      } catch (error) {
-        console.error("Error clearing fullscreen lock:", error);
-      }
-    }
-  };
 
   useEffect(() => {
     const unsub = initAuthListener(async (user) => {
@@ -95,10 +47,9 @@ export default function DashboardPage() {
   // Save active tab to Firestore whenever it changes
   useEffect(() => {
     const saveActiveTab = async () => {
-      const user = auth.currentUser;
-      if (user && authorized && tabLoaded) {
+      if (authorized && tabLoaded) {
         try {
-          const docRef = doc(db, "userPreferences", user.uid);
+          const docRef = doc(db, "userPreferences", "currentUser");
           await setDoc(docRef, { lastActiveTab: activeTab }, { merge: true });
         } catch (error) {
           console.error("Error saving active tab:", error);
@@ -146,80 +97,8 @@ export default function DashboardPage() {
         );
       case "version":
         return (
-          <div className="relative h-full flex flex-col">
-            {/* Animated Fullscreen Prompt */}
-            <div className="mb-4 p-3 rounded-lg light:bg-blue-50 dark:bg-blue-600/10 border light:border-blue-200 dark:border-blue-500/30 shrink-0">
-              <div className="flex items-center justify-between gap-3 flex-wrap">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 rounded-full bg-blue-500 animate-pulse shrink-0"></div>
-                  <p className="text-xs font-medium light:text-gray-900 dark:text-blue-400">
-                    💡 Want to see in fullscreen?
-                  </p>
-                </div>
-                <a
-                  href="/version-manager-fullscreen"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="px-3 py-1.5 text-xs rounded-md bg-blue-600 hover:bg-blue-700 text-white transition-colors font-semibold flex items-center gap-1.5 shadow-sm shrink-0"
-                >
-                  <svg
-                    className="w-3.5 h-3.5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"
-                    />
-                  </svg>
-                  Open Fullscreen
-                </a>
-              </div>
-            </div>
-
-            {/* Blur overlay when fullscreen is active */}
-            {isFullscreenActive && (
-              <div className="absolute inset-0 z-50 backdrop-blur-md rounded-lg flex items-center justify-center light:bg-white/90 dark:bg-black/90 pointer-events-auto">
-                <div className="text-center p-8 rounded-lg light:bg-white dark:bg-gray-800 shadow-2xl border light:border-gray-200 dark:border-gray-700">
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-full light:bg-blue-100 dark:bg-blue-600/20 flex items-center justify-center">
-                    <svg
-                      className="w-8 h-8 light:text-blue-600 dark:text-blue-400"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
-                      />
-                    </svg>
-                  </div>
-                  <h3 className="text-xl font-bold light:text-gray-900 dark:text-white mb-2">
-                    Opened in Fullscreen
-                  </h3>
-                  <p className="light:text-gray-600 dark:text-gray-400 text-sm mb-4">
-                    Version Notes Manager is currently open in fullscreen mode.
-                    <br />
-                    Close the fullscreen tab to edit here.
-                  </p>
-                  <button
-                    onClick={clearFullscreenLock}
-                    className="px-4 py-2 text-sm rounded-md bg-red-600 hover:bg-red-700 text-white transition-colors font-semibold"
-                  >
-                    🔓 Force Unlock (if stuck)
-                  </button>
-                </div>
-              </div>
-            )}
-
-            <div className="flex-1 overflow-hidden">
-              <VersionNotesManager />
-            </div>
+          <div className="h-full">
+            <VersionNotesManager />
           </div>
         );
       case "timesheet":
