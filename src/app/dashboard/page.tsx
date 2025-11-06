@@ -172,11 +172,11 @@ export default function DashboardPage() {
           />
         )}
 
-        {/* Left Sidebar - Balanced minimal design */}
+        {/* Left Sidebar - Compact minimal design */}
         <aside
           className={`
             fixed md:static inset-y-0 left-0 z-40
-            w-52 border-r light:border-gray-200 dark:border-white/10 p-3
+            w-48 border-r light:border-gray-200 dark:border-white/10 p-4
             light:bg-white dark:bg-black/20
             transform transition-transform duration-300 ease-in-out
             ${
@@ -187,7 +187,7 @@ export default function DashboardPage() {
             overflow-y-auto
           `}
         >
-          <div className="flex items-center justify-between mb-4 px-1">
+          <div className="flex items-center justify-between mb-3">
             <h3 className="text-xs font-semibold uppercase tracking-wide light:text-gray-600 dark:text-white/60">
               Menu
             </h3>
@@ -219,7 +219,7 @@ export default function DashboardPage() {
                   setActiveTab(item.id);
                   setIsSidebarOpen(false);
                 }}
-                className={`w-full text-left px-3 py-2 rounded-md transition-all duration-150 flex items-center gap-2.5 text-sm ${
+                className={`w-full text-left px-3 py-2 rounded-md transition-all duration-150 flex items-center gap-2 text-sm ${
                   activeTab === item.id
                     ? "bg-blue-600 text-white font-medium shadow-sm"
                     : "light:text-gray-700 dark:text-gray-300 light:hover:bg-gray-100 dark:hover:bg-white/5 light:hover:text-gray-900 dark:hover:text-white"
@@ -232,10 +232,10 @@ export default function DashboardPage() {
           </nav>
         </aside>
 
-        {/* Right Content Area */}
-        <div className="flex-1 p-4 md:p-6 light:bg-gray-50 dark:bg-transparent overflow-hidden flex flex-col min-h-0">
-          <div className="max-w-5xl mx-auto w-full flex-1 flex flex-col overflow-hidden min-h-0">
-            <div className="rounded-lg light:bg-white dark:bg-black/10 p-6 md:p-8 flex-1 flex flex-col overflow-hidden min-h-0">
+        {/* Right Content Area - Minimal compact spacing */}
+        <div className="flex-1 p-4 light:bg-gray-50 dark:bg-transparent overflow-hidden flex flex-col min-h-0">
+          <div className="w-full flex-1 flex flex-col overflow-hidden min-h-0">
+            <div className="rounded light:bg-white dark:bg-black/10 p-4 flex-1 flex flex-col overflow-hidden min-h-0">
               {renderTabContent()}
             </div>
           </div>

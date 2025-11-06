@@ -21,6 +21,10 @@ import {
   ChevronLeft,
 } from "lucide-react";
 import { toast } from "sonner";
+import {
+  createTimesheetNotification,
+  createErrorNotification,
+} from "@/lib/notificationHelpers";
 
 interface TimesheetEntry {
   id: string;
@@ -104,7 +108,10 @@ export default function ModernTimesheetMobile() {
       setEntries(data.entries || []);
     } catch (error: any) {
       console.error("Error fetching entries:", error);
-      toast.error(error.message || "Failed to load timesheet");
+      await createErrorNotification(
+        error.message || "Failed to load timesheet",
+        "Timesheet"
+      );
       setEntries([]);
     } finally {
       setFetchingEntries(false);
@@ -152,13 +159,16 @@ export default function ModernTimesheetMobile() {
 
       if (!response.ok) throw new Error("Failed to create entry");
 
-      toast.success("Entry added!");
+      await createTimesheetNotification("add", {
+        date: selectedDate,
+        startTime: startTime,
+      });
       setNewEntry({ startTime: "", endTime: "", description: "", tags: [] });
       setShowNewEntry(false);
       await fetchEntries();
     } catch (error: any) {
       console.error("Error creating entry:", error);
-      toast.error("Failed to add entry");
+      await createErrorNotification("Failed to add entry", "Timesheet");
     } finally {
       setLoading(false);
     }
@@ -175,11 +185,11 @@ export default function ModernTimesheetMobile() {
 
       if (!response.ok) throw new Error("Failed to delete entry");
 
-      toast.success("Entry deleted!");
+      await createTimesheetNotification("delete", { id });
       await fetchEntries();
     } catch (error: any) {
       console.error("Error deleting entry:", error);
-      toast.error("Failed to delete entry");
+      await createErrorNotification("Failed to delete entry", "Timesheet");
     } finally {
       setLoading(false);
     }

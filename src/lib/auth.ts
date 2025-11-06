@@ -11,6 +11,7 @@ import {
 } from "firebase/auth";
 import { auth } from "./firebase";
 import { toast } from "sonner";
+import { createAuthNotification } from "./notificationHelpers";
 
 // Export auth for use in other components
 export { auth };
@@ -38,7 +39,9 @@ export async function signInWithGoogle(): Promise<UserCredential> {
       throw new Error("Unauthorized email address.");
     }
 
-    toast.success("Successfully signed in!");
+    // Create login notification
+    await createAuthNotification("login", user);
+
     return cred;
   } catch (err: unknown) {
     const message = (err as Error).message || "Google Sign-In failed.";
@@ -71,6 +74,10 @@ export async function signIn(
 }
 
 export async function signOut(): Promise<void> {
+  const user = auth.currentUser;
+  if (user) {
+    await createAuthNotification("logout", user);
+  }
   await fbSignOut(auth);
 }
 

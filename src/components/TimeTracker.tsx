@@ -4,6 +4,10 @@ import React, { useState, useEffect } from "react";
 import { auth } from "@/lib/firebase";
 import { toast } from "sonner";
 import { Clock, LogIn, LogOut, Trash2, Edit2, Check, X } from "lucide-react";
+import {
+  createTimesheetNotification,
+  createErrorNotification,
+} from "@/lib/notificationHelpers";
 
 interface TimeLog {
   id: string;
@@ -73,7 +77,10 @@ export default function TimeTracker() {
       setLogs(filtered);
     } catch (error: any) {
       console.error("Error fetching logs:", error);
-      toast.error(error.message || "Failed to load time logs");
+      await createErrorNotification(
+        error.message || "Failed to load time logs",
+        "Time Tracker"
+      );
       setLogs([]);
     } finally {
       setFetchingLogs(false);
@@ -114,13 +121,13 @@ export default function TimeTracker() {
 
       if (!response.ok) throw new Error("Failed to create log");
 
-      toast.success("Time log saved!");
+      await createTimesheetNotification("add", { loginTime: manualLoginTime });
       setManualLoginTime("");
       setManualLogoutTime("");
       await fetchLogs();
     } catch (error: any) {
       console.error("Error creating log:", error);
-      toast.error("Failed to save time log");
+      await createErrorNotification("Failed to save time log", "Time Tracker");
     } finally {
       setLoading(false);
     }
@@ -146,14 +153,14 @@ export default function TimeTracker() {
 
       if (!response.ok) throw new Error("Failed to update log");
 
-      toast.success("Log updated!");
+      await createTimesheetNotification("update", { id, loginTime: editLogin });
       setEditingId(null);
       setEditLogin("");
       setEditLogout("");
       await fetchLogs();
     } catch (error: any) {
       console.error("Error updating log:", error);
-      toast.error("Failed to update log");
+      await createErrorNotification("Failed to update log", "Time Tracker");
     } finally {
       setLoading(false);
     }
@@ -170,11 +177,11 @@ export default function TimeTracker() {
 
       if (!response.ok) throw new Error("Failed to delete log");
 
-      toast.success("Log deleted!");
+      await createTimesheetNotification("delete", { id });
       await fetchLogs();
     } catch (error: any) {
       console.error("Error deleting log:", error);
-      toast.error("Failed to delete log");
+      await createErrorNotification("Failed to delete log", "Time Tracker");
     } finally {
       setLoading(false);
     }
@@ -252,13 +259,13 @@ export default function TimeTracker() {
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 h-full overflow-hidden">
       {/* Left Panel - Add New Log */}
       <div className="flex flex-col h-full overflow-hidden">
-        <h2 className="text-sm font-semibold light:text-gray-900 dark:text-white mb-3 shrink-0">
+        <h2 className="text-base font-semibold light:text-gray-900 dark:text-white mb-3 shrink-0">
           Track Time
         </h2>
 
-        <div className="flex-1 overflow-y-auto space-y-3 pr-2 scrollbar-thin">
+        <div className="flex-1 overflow-y-auto space-y-3 scrollbar-thin">
           {/* Punch In */}
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <label className="block text-xs font-medium light:text-gray-700 dark:text-gray-300">
                 Login Time *
@@ -266,7 +273,7 @@ export default function TimeTracker() {
               <button
                 onClick={handlePunchIn}
                 disabled={loading}
-                className="flex items-center gap-1 px-2 py-1 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded-md transition-all disabled:opacity-50"
+                className="flex items-center gap-1 px-2.5 py-1 bg-green-600 hover:bg-green-700 text-white text-xs font-medium rounded transition-all disabled:opacity-50"
               >
                 <LogIn className="w-3 h-3" />
                 Punch In
@@ -280,12 +287,12 @@ export default function TimeTracker() {
               type="datetime-local"
               value={manualLoginTime}
               onChange={(e) => setManualLoginTime(e.target.value)}
-              className="w-full px-2.5 py-1.5 text-sm rounded-md border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm rounded border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
           {/* Punch Out */}
-          <div className="space-y-2">
+          <div className="space-y-1.5">
             <div className="flex items-center justify-between">
               <label className="block text-xs font-medium light:text-gray-700 dark:text-gray-300">
                 Logout Time
@@ -293,7 +300,7 @@ export default function TimeTracker() {
               <button
                 onClick={handlePunchOut}
                 disabled={loading}
-                className="flex items-center gap-1 px-2 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded-md transition-all disabled:opacity-50"
+                className="flex items-center gap-1 px-2.5 py-1 bg-red-600 hover:bg-red-700 text-white text-xs font-medium rounded transition-all disabled:opacity-50"
               >
                 <LogOut className="w-3 h-3" />
                 Punch Out
@@ -307,7 +314,7 @@ export default function TimeTracker() {
               type="datetime-local"
               value={manualLogoutTime}
               onChange={(e) => setManualLogoutTime(e.target.value)}
-              className="w-full px-2.5 py-1.5 text-sm rounded-md border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-full px-3 py-2 text-sm rounded border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
 
@@ -315,14 +322,14 @@ export default function TimeTracker() {
           <button
             onClick={handleSubmitLog}
             disabled={loading || !manualLoginTime}
-            className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-md transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded transition-all disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loading ? "Saving..." : "Save Time Log"}
           </button>
 
           {/* Statistics */}
           <div className="grid grid-cols-3 gap-2 pt-2 border-t light:border-gray-200 dark:border-white/10">
-            <div className="text-center p-2 rounded-md light:bg-blue-50 dark:bg-blue-900/20">
+            <div className="text-center p-2 rounded light:bg-blue-50 dark:bg-blue-900/20">
               <p className="text-xs light:text-blue-700 dark:text-blue-400 font-medium">
                 Total Hrs
               </p>
@@ -330,7 +337,7 @@ export default function TimeTracker() {
                 {stats.totalHours}
               </p>
             </div>
-            <div className="text-center p-2 rounded-md light:bg-purple-50 dark:bg-purple-900/20">
+            <div className="text-center p-2 rounded light:bg-purple-50 dark:bg-purple-900/20">
               <p className="text-xs light:text-purple-700 dark:text-purple-400 font-medium">
                 Avg Hrs
               </p>
@@ -338,7 +345,7 @@ export default function TimeTracker() {
                 {stats.avgHours}
               </p>
             </div>
-            <div className="text-center p-2 rounded-md light:bg-green-50 dark:bg-green-900/20">
+            <div className="text-center p-2 rounded light:bg-green-50 dark:bg-green-900/20">
               <p className="text-xs light:text-green-700 dark:text-green-400 font-medium">
                 Sessions
               </p>
@@ -349,7 +356,7 @@ export default function TimeTracker() {
           </div>
 
           {/* Date Filter */}
-          <div className="space-y-2 pt-2 border-t light:border-gray-200 dark:border-white/10">
+          <div className="space-y-1.5 pt-2 border-t light:border-gray-200 dark:border-white/10">
             <label className="block text-xs font-medium light:text-gray-700 dark:text-gray-300">
               Filter by Date
             </label>
@@ -366,7 +373,7 @@ export default function TimeTracker() {
                     setDateRange({ ...dateRange, start: e.target.value })
                   }
                   placeholder="Start date"
-                  className="w-full px-2 py-1.5 text-xs rounded-md border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full px-2.5 py-1.5 text-xs rounded border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
               <div>
@@ -381,19 +388,19 @@ export default function TimeTracker() {
                     setDateRange({ ...dateRange, end: e.target.value })
                   }
                   placeholder="End date"
-                  className="w-full px-2 py-1.5 text-xs rounded-md border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="w-full px-2.5 py-1.5 text-xs rounded border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
             </div>
           </div>
 
-          {/* Daily Hours Chart - Below Date Filter */}
+          {/* Daily Hours Chart */}
           {dailyData.length > 0 && (
             <div className="pt-2 border-t light:border-gray-200 dark:border-white/10">
               <p className="text-xs font-medium light:text-gray-700 dark:text-gray-300 mb-2">
                 Daily Hours (Last 7 Days)
               </p>
-              <div className="flex items-end justify-between gap-1.5 h-24">
+              <div className="flex items-end justify-between gap-1 h-20">
                 {dailyData.map((day) => {
                   const heightPercent = (day.hours / maxHours) * 100;
                   const dayName = new Date(day.date).toLocaleDateString(
@@ -408,13 +415,13 @@ export default function TimeTracker() {
                     >
                       <div
                         className="w-full flex items-end justify-center"
-                        style={{ height: "70px" }}
+                        style={{ height: "60px" }}
                       >
                         <div
                           className="w-full bg-linear-to-t from-blue-500 to-blue-400 rounded-t transition-all hover:from-blue-600 hover:to-blue-500 relative group cursor-pointer"
                           style={{
                             height: `${heightPercent}%`,
-                            minHeight: day.hours > 0 ? "6px" : "0",
+                            minHeight: day.hours > 0 ? "4px" : "0",
                           }}
                         >
                           <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] font-bold light:text-gray-900 dark:text-white opacity-0 group-hover:opacity-100 transition-opacity bg-blue-500 text-white px-1.5 py-0.5 rounded whitespace-nowrap">
@@ -442,7 +449,7 @@ export default function TimeTracker() {
       {/* Right Panel - Time Logs History */}
       <div className="flex flex-col h-full overflow-hidden">
         <div className="flex items-center justify-between mb-3 shrink-0">
-          <h2 className="text-sm font-semibold light:text-gray-900 dark:text-white">
+          <h2 className="text-base font-semibold light:text-gray-900 dark:text-white">
             Time Logs
           </h2>
           <span className="text-xs light:text-gray-600 dark:text-gray-400">
@@ -450,7 +457,7 @@ export default function TimeTracker() {
           </span>
         </div>
 
-        <div className="flex-1 overflow-y-auto pr-2 scrollbar-thin">
+        <div className="flex-1 overflow-y-auto scrollbar-thin">
           {fetchingLogs ? (
             <div className="flex items-center justify-center py-12">
               <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
@@ -467,7 +474,7 @@ export default function TimeTracker() {
               {logs.map((log) => (
                 <div
                   key={log.id}
-                  className="p-2.5 light:bg-gray-50 dark:bg-black/20 rounded-md border light:border-gray-200 dark:border-white/5 hover:border-blue-500/50 transition-all"
+                  className="p-2.5 light:bg-gray-50 dark:bg-black/20 rounded border light:border-gray-200 dark:border-white/5 hover:border-blue-500/50 transition-all"
                 >
                   {editingId === log.id ? (
                     <div className="space-y-2">
@@ -484,7 +491,7 @@ export default function TimeTracker() {
                             type="datetime-local"
                             value={editLogin}
                             onChange={(e) => setEditLogin(e.target.value)}
-                            className="w-full px-2 py-1 text-xs rounded-md border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            className="w-full px-2 py-1.5 text-xs rounded border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                           />
                         </div>
                         <div>
@@ -499,7 +506,7 @@ export default function TimeTracker() {
                             type="datetime-local"
                             value={editLogout}
                             onChange={(e) => setEditLogout(e.target.value)}
-                            className="w-full px-2 py-1 text-xs rounded-md border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
+                            className="w-full px-2 py-1.5 text-xs rounded border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white focus:outline-none focus:ring-1 focus:ring-blue-500"
                           />
                         </div>
                       </div>
@@ -507,7 +514,7 @@ export default function TimeTracker() {
                         <button
                           onClick={() => handleUpdateLog(log.id)}
                           disabled={loading}
-                          className="flex items-center gap-1 px-2 py-1 bg-green-600 hover:bg-green-700 text-white text-xs rounded-md transition-all disabled:opacity-50"
+                          className="flex items-center gap-1 px-2.5 py-1 bg-green-600 hover:bg-green-700 text-white text-xs rounded transition-all disabled:opacity-50"
                         >
                           <Check className="w-3 h-3" />
                           Save
@@ -515,7 +522,7 @@ export default function TimeTracker() {
                         <button
                           onClick={cancelEdit}
                           disabled={loading}
-                          className="flex items-center gap-1 px-2 py-1 bg-gray-600 hover:bg-gray-700 text-white text-xs rounded-md transition-all"
+                          className="flex items-center gap-1 px-2.5 py-1 bg-gray-600 hover:bg-gray-700 text-white text-xs rounded transition-all"
                         >
                           <X className="w-3 h-3" />
                           Cancel
@@ -558,7 +565,7 @@ export default function TimeTracker() {
                         <button
                           onClick={() => startEdit(log)}
                           disabled={loading}
-                          className="p-1.5 light:bg-blue-100 dark:bg-blue-900/20 light:text-blue-700 dark:text-blue-400 rounded-md hover:bg-blue-200 dark:hover:bg-blue-900/40 transition-all"
+                          className="p-1.5 light:bg-blue-100 dark:bg-blue-900/20 light:text-blue-700 dark:text-blue-400 rounded hover:bg-blue-200 dark:hover:bg-blue-900/40 transition-all"
                           aria-label="Edit log"
                         >
                           <Edit2 className="w-3.5 h-3.5" />
@@ -566,7 +573,7 @@ export default function TimeTracker() {
                         <button
                           onClick={() => handleDeleteLog(log.id)}
                           disabled={loading}
-                          className="p-1.5 light:bg-red-100 dark:bg-red-900/20 light:text-red-700 dark:text-red-400 rounded-md hover:bg-red-200 dark:hover:bg-red-900/40 transition-all"
+                          className="p-1.5 light:bg-red-100 dark:bg-red-900/20 light:text-red-700 dark:text-red-400 rounded hover:bg-red-200 dark:hover:bg-red-900/40 transition-all"
                           aria-label="Delete log"
                         >
                           <Trash2 className="w-3.5 h-3.5" />

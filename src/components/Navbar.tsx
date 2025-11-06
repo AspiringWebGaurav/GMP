@@ -71,7 +71,6 @@ export default function Navbar({ showNotifications = true }: NavbarProps) {
   const handleLogout = async () => {
     try {
       await signOut();
-      toast.success("Logged out successfully");
       router.push("/login");
     } catch (error) {
       toast.error("Failed to logout");

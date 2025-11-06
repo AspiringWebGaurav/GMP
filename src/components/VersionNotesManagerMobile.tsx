@@ -12,6 +12,10 @@ import {
   Timestamp,
 } from "firebase/firestore";
 import { toast } from "sonner";
+import {
+  createVersionNotification,
+  createErrorNotification,
+} from "@/lib/notificationHelpers";
 import { X } from "lucide-react";
 
 interface VersionHistory {
@@ -111,7 +115,7 @@ export default function VersionNotesManagerMobile() {
       }
     } catch (error) {
       console.error("Error:", error);
-      toast.error("Failed to load history");
+      await createErrorNotification("Failed to load history", "Version Notes");
     } finally {
       setLoading(false);
     }
@@ -153,7 +157,7 @@ export default function VersionNotesManagerMobile() {
         createdAt: Timestamp.now(),
       };
       await addDoc(collection(db, "versionHistory"), newVersion);
-      toast.success("Version saved! Refreshing...");
+      await createVersionNotification("create", version.trim());
       setVersion("");
       setChangelog([]);
       setChangelogInput("");
@@ -165,7 +169,7 @@ export default function VersionNotesManagerMobile() {
       }, 1000);
     } catch (error) {
       console.error("Error:", error);
-      toast.error("Failed to save version");
+      await createErrorNotification("Failed to save version", "Version Notes");
     } finally {
       setSaving(false);
     }
