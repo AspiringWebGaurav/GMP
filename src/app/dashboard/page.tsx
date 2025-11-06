@@ -18,9 +18,11 @@ import TodoList from "../../components/TodoList";
 import TodoListMobile from "../../components/TodoListMobile";
 import RecycleBin from "../../components/RecycleBin";
 import RecycleBinMobile from "../../components/RecycleBinMobile";
+import { useLoading } from "../../contexts/LoadingContext";
 
 export default function DashboardPage() {
   const router = useRouter();
+  const { startLoading, stopLoading } = useLoading();
   const [loading, setLoading] = useState(true);
   const [authorized, setAuthorized] = useState(false);
   const [activeTab, setActiveTab] = useState<
@@ -44,6 +46,7 @@ export default function DashboardPage() {
   }, []);
 
   useEffect(() => {
+    startLoading("Loading dashboard...");
     const unsub = initAuthListener(async (user) => {
       setLoading(false);
       if (user) {
@@ -60,13 +63,18 @@ export default function DashboardPage() {
           console.error("Error loading last active tab:", error);
         } finally {
           setTabLoaded(true);
+          stopLoading();
         }
       } else {
+        stopLoading();
         router.replace("/login");
       }
     });
-    return () => unsub();
-  }, [router]);
+    return () => {
+      unsub();
+      stopLoading();
+    };
+  }, [router, startLoading, stopLoading]);
 
   // Save active tab to Firestore whenever it changes
   useEffect(() => {
@@ -85,11 +93,7 @@ export default function DashboardPage() {
   }, [activeTab, authorized, tabLoaded, currentUserId]);
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        Loading…
-      </div>
-    );
+    return null;
   }
 
   if (!authorized) return null;
@@ -100,6 +104,9 @@ export default function DashboardPage() {
     { id: "timesheet" as const, label: "Timesheet", icon: "⏰" },
     { id: "todo" as const, label: "TODO List", icon: "✅" },
   ];
+
+  // Desktop menu items (without Recycle Bin)
+  const desktopMenuItems = menuItems.filter((item) => item.id !== "recycle");
 
   // Get current active tab label
   const getActiveTabLabel = () => {
@@ -151,11 +158,11 @@ export default function DashboardPage() {
         <Navbar onVersionNotesClick={() => setActiveTab("version")} />
         <Breadcrumb activeTab={getActiveTabLabel()} />
       </div>
-      <main className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">
-        {/* Mobile Menu Button - Compact FAB */}
+      <main className="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0">
+        {/* Mobile Menu Button - Compact FAB (only visible on mobile) */}
         <button
           onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          className="md:hidden fixed bottom-5 right-5 z-50 bg-linear-to-br from-blue-600 to-indigo-700 text-white p-3.5 rounded-xl shadow-xl hover:shadow-blue-500/40 hover:scale-105 active:scale-95 transition-all duration-300"
+          className="lg:hidden fixed bottom-5 right-5 z-50 bg-linear-to-br from-blue-600 to-indigo-700 text-white p-3.5 rounded-xl shadow-xl hover:shadow-blue-500/40 hover:scale-105 active:scale-95 transition-all duration-300"
           aria-label="Toggle menu"
         >
           <svg
@@ -187,27 +194,24 @@ export default function DashboardPage() {
         {/* Overlay for mobile */}
         {isSidebarOpen && (
           <div
-            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 md:hidden transition-opacity duration-300 ease-in-out"
+            className="fixed inset-0 bg-black/60 backdrop-blur-sm z-30 lg:hidden transition-opacity duration-300 ease-in-out"
             onClick={() => setIsSidebarOpen(false)}
           />
         )}
 
-        {/* Left Sidebar - Polished compact design */}
+        {/* MOBILE DRAWER - Beautiful animated drawer (visible only on mobile) */}
         <aside
           className={`
-            fixed md:static inset-y-0 left-0 z-40
-            w-64 md:w-48 border-r border-gray-200
+            lg:hidden
+            fixed inset-y-0 left-0 z-40
+            w-64 border-r border-gray-200
             bg-white
             transform transition-all duration-300 ease-out
-            ${
-              isSidebarOpen
-                ? "translate-x-0 shadow-xl"
-                : "-translate-x-full md:translate-x-0 md:shadow-none"
-            }
+            ${isSidebarOpen ? "translate-x-0 shadow-xl" : "-translate-x-full"}
             flex flex-col
           `}
         >
-          {/* Compact Header */}
+          {/* Mobile Header */}
           <div className="shrink-0 px-4 py-3 border-b border-gray-100 bg-linear-to-r from-blue-50 to-indigo-50">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -221,7 +225,7 @@ export default function DashboardPage() {
               </div>
               <button
                 onClick={() => setIsSidebarOpen(false)}
-                className="md:hidden p-1.5 hover:bg-white/80 rounded-md transition-all duration-200"
+                className="p-1.5 hover:bg-white/80 rounded-md transition-all duration-200"
                 aria-label="Close menu"
               >
                 <svg
@@ -241,7 +245,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Compact Navigation */}
+          {/* Mobile Navigation */}
           <div className="flex-1 overflow-y-auto px-3 py-4">
             <nav className="space-y-1">
               {menuItems.map((item, index) => (
@@ -285,7 +289,7 @@ export default function DashboardPage() {
             </nav>
           </div>
 
-          {/* Compact Logout */}
+          {/* Mobile Logout */}
           <div className="shrink-0 px-3 pb-3">
             <button
               onClick={async () => {
@@ -312,7 +316,7 @@ export default function DashboardPage() {
             </button>
           </div>
 
-          {/* Compact Version */}
+          {/* Mobile Version */}
           <div className="shrink-0 px-3 pb-2">
             <div className="bg-gray-50 rounded-md px-3 py-2 border border-gray-200">
               <div className="flex items-center justify-between">
@@ -332,7 +336,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          {/* Compact Footer */}
+          {/* Mobile Footer */}
           <div className="shrink-0 px-3 pb-3 border-t border-gray-100 pt-2">
             <div className="text-center space-y-1.5">
               <div className="flex items-center justify-center gap-1.5">
@@ -378,6 +382,33 @@ export default function DashboardPage() {
               </p>
             </div>
           </div>
+        </aside>
+
+        {/* DESKTOP SIDEBAR - Simple compact sidebar (visible only on desktop) */}
+        <aside className="hidden lg:block w-48 border-r border-gray-200 p-4 bg-white overflow-y-auto">
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-600">
+              Menu
+            </h3>
+          </div>
+          <nav className="space-y-1">
+            {desktopMenuItems.map((item) => (
+              <button
+                key={item.id}
+                onClick={() => {
+                  setActiveTab(item.id);
+                }}
+                className={`w-full text-left px-3 py-2 rounded-md transition-all duration-150 flex items-center gap-2 text-sm ${
+                  activeTab === item.id
+                    ? "bg-blue-600 text-white font-medium shadow-sm"
+                    : "text-gray-700 hover:bg-gray-100 hover:text-gray-900"
+                }`}
+              >
+                <span className="text-base">{item.icon}</span>
+                <span>{item.label}</span>
+              </button>
+            ))}
+          </nav>
         </aside>
 
         <style jsx>{`

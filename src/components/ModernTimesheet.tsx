@@ -26,6 +26,7 @@ import {
   createErrorNotification,
 } from "@/lib/notificationHelpers";
 import { useRecycleBin } from "@/contexts/RecycleBinContext";
+import { useLoading } from "@/contexts/LoadingContext";
 
 interface TimesheetEntry {
   id: string;
@@ -49,6 +50,7 @@ interface DayGroup {
 
 export default function ModernTimesheet() {
   const { moveToRecycleBin } = useRecycleBin();
+  const { withLoading } = useLoading();
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [entries, setEntries] = useState<TimesheetEntry[]>([]);
   const [loading, setLoading] = useState(false);
@@ -111,27 +113,30 @@ export default function ModernTimesheet() {
   const fetchEntries = async () => {
     if (!currentUserId) return;
     setFetchingEntries(true);
-    try {
-      const response = await fetch(`/api/timesheet?userId=${currentUserId}`);
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error("API Error:", errorData);
-        throw new Error(errorData.details || "Failed to fetch entries");
+    await withLoading(async () => {
+      try {
+        const response = await fetch(`/api/timesheet?userId=${currentUserId}`);
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          console.error("API Error:", errorData);
+          throw new Error(errorData.details || "Failed to fetch entries");
+        }
+
+        const data = await response.json();
+        setEntries(data.entries || []);
+      } catch (error: any) {
+        console.error("Error fetching entries:", error);
+        await createErrorNotification(
+          error.message || "Failed to load timesheet",
+          "Timesheet"
+        );
+        setEntries([]);
+      } finally {
+        setFetchingEntries(false);
       }
-
-      const data = await response.json();
-      setEntries(data.entries || []);
-    } catch (error: any) {
-      console.error("Error fetching entries:", error);
-      await createErrorNotification(
-        error.message || "Failed to load timesheet",
-        "Timesheet"
-      );
-      setEntries([]);
-    } finally {
-      setFetchingEntries(false);
-    }
+    }, "Loading timesheet...");
   };
 
   const loadRecentTags = () => {
@@ -637,18 +642,12 @@ export default function ModernTimesheet() {
               <span className="text-xs text-gray-600">
                 {entryMode === "hourly" ? (
                   <>
-                    ⏱️{" "}
-                    <strong className="text-gray-900">
-                      Hourly Mode:
-                    </strong>{" "}
+                    ⏱️ <strong className="text-gray-900">Hourly Mode:</strong>{" "}
                     Track specific time ranges
                   </>
                 ) : (
                   <>
-                    📅{" "}
-                    <strong className="text-gray-900">
-                      Daily Mode:
-                    </strong>{" "}
+                    📅 <strong className="text-gray-900">Daily Mode:</strong>{" "}
                     Log full day work (default 8 hours)
                   </>
                 )}
@@ -921,9 +920,7 @@ export default function ModernTimesheet() {
                         </p>
                       </div>
                       <div className="text-right">
-                        <p className="text-xs text-gray-600">
-                          Total
-                        </p>
+                        <p className="text-xs text-gray-600">Total</p>
                         <p className="text-sm font-bold text-blue-600">
                           {dayGroup.totalHours.toFixed(1)}h
                         </p>

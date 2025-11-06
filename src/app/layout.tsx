@@ -4,6 +4,8 @@ import "../styles/globals.css";
 import Providers from "../components/providers/ToasterProvider";
 import { NotificationProvider } from "../contexts/NotificationContext";
 import { RecycleBinProvider } from "../contexts/RecycleBinContext";
+import { LoadingProvider } from "../contexts/LoadingContext";
+import AppLoader from "../components/AppLoader";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -51,11 +53,16 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-surface text-foreground min-h-screen`}
       >
-        <NotificationProvider>
-          <RecycleBinProvider>
-            <Providers>{children}</Providers>
-          </RecycleBinProvider>
-        </NotificationProvider>
+        <LoadingProvider>
+          <NotificationProvider>
+            <RecycleBinProvider>
+              <Providers>
+                <AppLoader />
+                {children}
+              </Providers>
+            </RecycleBinProvider>
+          </NotificationProvider>
+        </LoadingProvider>
       </body>
     </html>
   );

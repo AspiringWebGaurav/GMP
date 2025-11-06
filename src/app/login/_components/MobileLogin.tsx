@@ -7,21 +7,25 @@ import Breadcrumb from "../../../components/Breadcrumb";
 import Footer from "../../../components/Footer";
 import { signInWithGoogle } from "../../../lib/auth";
 import { useRouter } from "next/navigation";
+import { useLoading } from "../../../contexts/LoadingContext";
 
 export default function MobileLogin() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const { withLoading } = useLoading();
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
-    try {
-      await signInWithGoogle();
-      router.push("/dashboard");
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+    await withLoading(async () => {
+      try {
+        await signInWithGoogle();
+        router.push("/dashboard");
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }, "Signing in...");
   };
 
   return (

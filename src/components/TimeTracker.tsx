@@ -9,6 +9,7 @@ import {
   createErrorNotification,
 } from "@/lib/notificationHelpers";
 import { useRecycleBin } from "@/contexts/RecycleBinContext";
+import { useLoading } from "@/contexts/LoadingContext";
 
 interface TimeLog {
   id: string;
@@ -21,6 +22,7 @@ interface TimeLog {
 
 export default function TimeTracker() {
   const { moveToRecycleBin } = useRecycleBin();
+  const { withLoading } = useLoading();
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [manualLoginTime, setManualLoginTime] = useState("");
   const [manualLogoutTime, setManualLogoutTime] = useState("");
@@ -55,38 +57,41 @@ export default function TimeTracker() {
   const fetchLogs = async () => {
     if (!currentUserId) return;
     setFetchingLogs(true);
-    try {
-      const response = await fetch(`/api/time-logs?userId=${currentUserId}`);
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error("API Error:", errorData);
-        throw new Error(errorData.details || "Failed to fetch logs");
+    await withLoading(async () => {
+      try {
+        const response = await fetch(`/api/time-logs?userId=${currentUserId}`);
+
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          console.error("API Error:", errorData);
+          throw new Error(errorData.details || "Failed to fetch logs");
+        }
+
+        const data = await response.json();
+        const allLogs = data.logs || [];
+
+        // Client-side date filtering
+        const filtered = allLogs.filter((log: TimeLog) => {
+          const logDate = new Date(log.loginTime);
+          const start = new Date(dateRange.start);
+          const end = new Date(dateRange.end);
+          end.setHours(23, 59, 59, 999);
+          return logDate >= start && logDate <= end;
+        });
+
+        setLogs(filtered);
+      } catch (error: any) {
+        console.error("Error fetching logs:", error);
+        await createErrorNotification(
+          error.message || "Failed to load time logs",
+          "Time Tracker"
+        );
+        setLogs([]);
+      } finally {
+        setFetchingLogs(false);
       }
-
-      const data = await response.json();
-      const allLogs = data.logs || [];
-
-      // Client-side date filtering
-      const filtered = allLogs.filter((log: TimeLog) => {
-        const logDate = new Date(log.loginTime);
-        const start = new Date(dateRange.start);
-        const end = new Date(dateRange.end);
-        end.setHours(23, 59, 59, 999);
-        return logDate >= start && logDate <= end;
-      });
-
-      setLogs(filtered);
-    } catch (error: any) {
-      console.error("Error fetching logs:", error);
-      await createErrorNotification(
-        error.message || "Failed to load time logs",
-        "Time Tracker"
-      );
-      setLogs([]);
-    } finally {
-      setFetchingLogs(false);
-    }
+    }, "Loading time logs...");
   };
 
   const handlePunchIn = () => {
@@ -108,31 +113,39 @@ export default function TimeTracker() {
     }
 
     setLoading(true);
-    try {
-      const response = await fetch("/api/time-logs", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          userId: currentUserId,
-          loginTime: new Date(manualLoginTime).toISOString(),
-          logoutTime: manualLogoutTime
-            ? new Date(manualLogoutTime).toISOString()
-            : null,
-        }),
-      });
 
-      if (!response.ok) throw new Error("Failed to create log");
+    await withLoading(async () => {
+      try {
+        const response = await fetch("/api/time-logs", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            userId: currentUserId,
+            loginTime: new Date(manualLoginTime).toISOString(),
+            logoutTime: manualLogoutTime
+              ? new Date(manualLogoutTime).toISOString()
+              : null,
+          }),
+        });
 
-      await createTimesheetNotification("add", { loginTime: manualLoginTime });
-      setManualLoginTime("");
-      setManualLogoutTime("");
-      await fetchLogs();
-    } catch (error: any) {
-      console.error("Error creating log:", error);
-      await createErrorNotification("Failed to save time log", "Time Tracker");
-    } finally {
-      setLoading(false);
-    }
+        if (!response.ok) throw new Error("Failed to create log");
+
+        await createTimesheetNotification("add", {
+          loginTime: manualLoginTime,
+        });
+        setManualLoginTime("");
+        setManualLogoutTime("");
+        await fetchLogs();
+      } catch (error: any) {
+        console.error("Error creating log:", error);
+        await createErrorNotification(
+          "Failed to save time log",
+          "Time Tracker"
+        );
+      } finally {
+        setLoading(false);
+      }
+    }, "Saving time log...");
   };
 
   const handleUpdateLog = async (id: string) => {
@@ -338,25 +351,19 @@ export default function TimeTracker() {
           {/* Statistics */}
           <div className="grid grid-cols-3 gap-2 pt-2 border-t border-gray-200">
             <div className="text-center p-2 rounded bg-blue-50">
-              <p className="text-xs text-blue-700 font-medium">
-                Total Hrs
-              </p>
+              <p className="text-xs text-blue-700 font-medium">Total Hrs</p>
               <p className="text-lg font-bold text-blue-900">
                 {stats.totalHours}
               </p>
             </div>
             <div className="text-center p-2 rounded bg-purple-50">
-              <p className="text-xs text-purple-700 font-medium">
-                Avg Hrs
-              </p>
+              <p className="text-xs text-purple-700 font-medium">Avg Hrs</p>
               <p className="text-lg font-bold text-purple-900">
                 {stats.avgHours}
               </p>
             </div>
             <div className="text-center p-2 rounded bg-green-50">
-              <p className="text-xs text-green-700 font-medium">
-                Sessions
-              </p>
+              <p className="text-xs text-green-700 font-medium">Sessions</p>
               <p className="text-lg font-bold text-green-900">
                 {stats.sessions}
               </p>
@@ -432,7 +439,7 @@ export default function TimeTracker() {
                             minHeight: day.hours > 0 ? "4px" : "0",
                           }}
                         >
-                          <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] font-bold text-gray-900 opacity-0 group-hover:opacity-100 transition-opacity bg-blue-500 text-white px-1.5 py-0.5 rounded whitespace-nowrap">
+                          <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] font-bold opacity-0 group-hover:opacity-100 transition-opacity bg-blue-500 text-white px-1.5 py-0.5 rounded whitespace-nowrap">
                             {day.hours.toFixed(1)}h
                           </span>
                         </div>
@@ -457,9 +464,7 @@ export default function TimeTracker() {
       {/* Right Panel - Time Logs History */}
       <div className="flex flex-col h-full overflow-hidden">
         <div className="flex items-center justify-between mb-3 shrink-0">
-          <h2 className="text-base font-semibold text-gray-900">
-            Time Logs
-          </h2>
+          <h2 className="text-base font-semibold text-gray-900">Time Logs</h2>
           <span className="text-xs text-gray-600">
             {logs.length} {logs.length === 1 ? "log" : "logs"}
           </span>
@@ -473,9 +478,7 @@ export default function TimeTracker() {
           ) : logs.length === 0 ? (
             <div className="text-center py-12">
               <Clock className="w-10 h-10 text-gray-400 mx-auto mb-2" />
-              <p className="text-sm text-gray-600">
-                No time logs found
-              </p>
+              <p className="text-sm text-gray-600">No time logs found</p>
             </div>
           ) : (
             <div className="space-y-2">

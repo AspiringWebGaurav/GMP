@@ -8,23 +8,27 @@ import { signInWithGoogle } from "../../../lib/auth";
 import Footer from "../../../components/Footer";
 import { useRouter } from "next/navigation";
 import { Sparkles, Shield, Zap } from "lucide-react";
+import { useLoading } from "../../../contexts/LoadingContext";
 
 export default function DesktopLogin() {
   const router = useRouter();
+  const { withLoading } = useLoading();
   const [loading, setLoading] = useState(false);
   const reduce = useReducedMotion();
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
-    try {
-      await signInWithGoogle();
-      router.push("/dashboard");
-    } catch (err) {
-      // Error already toasted in auth.ts
-      console.error(err);
-    } finally {
-      setLoading(false);
-    }
+    await withLoading(async () => {
+      try {
+        await signInWithGoogle();
+        router.push("/dashboard");
+      } catch (err) {
+        // Error already toasted in auth.ts
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }, "Signing in...");
   };
 
   const containerVariants = {

@@ -85,15 +85,6 @@ export const RecycleBinProvider: React.FC<RecycleBinProviderProps> = ({
     }
   }, [currentUserId]);
 
-  // Auto-cleanup expired items
-  useEffect(() => {
-    const interval = setInterval(() => {
-      autoCleanupExpiredItems();
-    }, 60000); // Check every minute
-
-    return () => clearInterval(interval);
-  }, [items, currentUserId]);
-
   // Update stats when items change
   useEffect(() => {
     updateStats();
@@ -114,15 +105,18 @@ export const RecycleBinProvider: React.FC<RecycleBinProviderProps> = ({
     }
   };
 
-  const saveItems = (updatedItems: RecycleBinItem[]) => {
-    if (!currentUserId) return;
+  const saveItems = useCallback(
+    (updatedItems: RecycleBinItem[]) => {
+      if (!currentUserId) return;
 
-    localStorage.setItem(
-      `recycleBin_${currentUserId}`,
-      JSON.stringify(updatedItems)
-    );
-    setItems(updatedItems);
-  };
+      localStorage.setItem(
+        `recycleBin_${currentUserId}`,
+        JSON.stringify(updatedItems)
+      );
+      setItems(updatedItems);
+    },
+    [currentUserId]
+  );
 
   const updateStats = () => {
     const now = new Date().getTime();
@@ -181,7 +175,7 @@ export const RecycleBinProvider: React.FC<RecycleBinProviderProps> = ({
         toast.error("Failed to move item to Recycle Bin");
       }
     },
-    [currentUserId, items]
+    [currentUserId, items, saveItems]
   );
 
   const restoreItem = useCallback(
@@ -205,7 +199,7 @@ export const RecycleBinProvider: React.FC<RecycleBinProviderProps> = ({
         return null;
       }
     },
-    [items]
+    [items, saveItems]
   );
 
   const permanentlyDelete = useCallback(
@@ -219,10 +213,15 @@ export const RecycleBinProvider: React.FC<RecycleBinProviderProps> = ({
         toast.error("Failed to delete item");
       }
     },
-    [items]
+    [items, saveItems]
   );
 
   const permanentlyDeleteAll = useCallback(async (): Promise<void> => {
+    if (!currentUserId) {
+      toast.error("User not authenticated");
+      return;
+    }
+
     if (!confirm("Permanently delete all items? This cannot be undone!")) {
       return;
     }
@@ -230,11 +229,13 @@ export const RecycleBinProvider: React.FC<RecycleBinProviderProps> = ({
     try {
       saveItems([]);
       toast.success("All items permanently deleted");
+      // Refresh the page to show updated UI
+      window.location.reload();
     } catch (error) {
       console.error("Error deleting all items:", error);
       toast.error("Failed to delete all items");
     }
-  }, []);
+  }, [currentUserId, saveItems]);
 
   const extendExpiry = useCallback(
     async (recycleBinId: string, days: 15 | 30): Promise<void> => {
@@ -261,10 +262,10 @@ export const RecycleBinProvider: React.FC<RecycleBinProviderProps> = ({
         toast.error("Failed to extend expiry");
       }
     },
-    [items]
+    [items, saveItems]
   );
 
-  const autoCleanupExpiredItems = () => {
+  const autoCleanupExpiredItems = useCallback(() => {
     if (!currentUserId) return;
 
     const now = new Date().getTime();
@@ -286,7 +287,16 @@ export const RecycleBinProvider: React.FC<RecycleBinProviderProps> = ({
         }
       );
     }
-  };
+  }, [currentUserId, items, saveItems]);
+
+  // Auto-cleanup expired items
+  useEffect(() => {
+    const interval = setInterval(() => {
+      autoCleanupExpiredItems();
+    }, 60000); // Check every minute
+
+    return () => clearInterval(interval);
+  }, [autoCleanupExpiredItems]);
 
   const getFilteredItems = useCallback(
     (filters?: RecycleBinFilters): RecycleBinItem[] => {
