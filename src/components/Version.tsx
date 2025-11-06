@@ -25,7 +25,7 @@ export default function Version() {
   }, []);
 
   return (
-    <span className="text-sm light:text-gray-600 dark:text-zinc-500">
+    <span className="text-sm text-gray-600">
       {version}
     </span>
   );

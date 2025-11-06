@@ -15,12 +15,7 @@ const config: Config = {
       },
     },
   },
-  plugins: [
-    function ({ addVariant }: any) {
-      addVariant("light", "html.light &");
-      addVariant("dark", "html:not(.light) &");
-    },
-  ],
+  plugins: [],
 };
 
 export default config;

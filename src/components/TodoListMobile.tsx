@@ -262,26 +262,26 @@ export default function TodoListMobile() {
   const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "high":
-        return "bg-red-500/20 text-red-400 light:text-red-600 border-red-500/30";
+        return "bg-red-500/20 text-red-600 border-red-500/30";
       case "medium":
-        return "bg-yellow-500/20 text-yellow-400 light:text-yellow-700 border-yellow-500/30";
+        return "bg-yellow-500/20 text-yellow-700 border-yellow-500/30";
       case "low":
-        return "bg-green-500/20 text-green-400 light:text-green-700 border-green-500/30";
+        return "bg-green-500/20 text-green-700 border-green-500/30";
       default:
-        return "bg-gray-500/20 text-gray-400 light:text-gray-600 border-gray-500/30";
+        return "bg-gray-500/20 text-gray-600 border-gray-500/30";
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
       case "completed":
-        return "bg-green-500/20 text-green-400 light:text-green-700 border-green-500/30";
+        return "bg-green-500/20 text-green-700 border-green-500/30";
       case "in-progress":
-        return "bg-blue-500/20 text-blue-400 light:text-blue-700 border-blue-500/30";
+        return "bg-blue-500/20 text-blue-700 border-blue-500/30";
       case "pending":
-        return "bg-gray-500/20 text-gray-400 light:text-gray-600 border-gray-500/30";
+        return "bg-gray-500/20 text-gray-600 border-gray-500/30";
       default:
-        return "bg-gray-500/20 text-gray-400 light:text-gray-600 border-gray-500/30";
+        return "bg-gray-500/20 text-gray-600 border-gray-500/30";
     }
   };
 
@@ -302,7 +302,7 @@ export default function TodoListMobile() {
       {/* Header with Filter and Sort */}
       <div className="space-y-2 shrink-0">
         <div className="flex items-center justify-between">
-          <h2 className="text-base font-semibold light:text-gray-900 dark:text-white">
+          <h2 className="text-base font-semibold text-black">
             TODO List ({filteredTodos.length})
           </h2>
           <button
@@ -317,11 +317,11 @@ export default function TodoListMobile() {
         <div className="flex items-center gap-2">
           {/* Filter */}
           <div className="flex items-center gap-1.5 flex-1">
-            <Filter className="w-3.5 h-3.5 light:text-gray-600 dark:text-gray-400" />
+            <Filter className="w-3.5 h-3.5 text-black" />
             <select
               value={filterStatus}
               onChange={(e) => setFilterStatus(e.target.value as FilterStatus)}
-              className="flex-1 px-2 py-1.5 text-xs rounded border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 px-2 py-1.5 text-xs rounded border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
               title="Filter tasks by status"
               aria-label="Filter tasks by status"
             >
@@ -334,11 +334,11 @@ export default function TodoListMobile() {
 
           {/* Sort */}
           <div className="flex items-center gap-1.5 flex-1">
-            <ArrowUpDown className="w-3.5 h-3.5 light:text-gray-600 dark:text-gray-400" />
+            <ArrowUpDown className="w-3.5 h-3.5 text-black" />
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value as SortBy)}
-              className="flex-1 px-2 py-1.5 text-xs rounded border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 px-2 py-1.5 text-xs rounded border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
               title="Sort tasks by"
               aria-label="Sort tasks by"
             >
@@ -353,23 +353,21 @@ export default function TodoListMobile() {
 
       {/* Add Task Form */}
       {showAddForm && (
-        <div className="p-3 rounded border light:border-gray-200 dark:border-white/10 light:bg-white dark:bg-black/20 space-y-2 shrink-0">
-          <h3 className="text-sm font-medium light:text-gray-900 dark:text-white">
-            New Task
-          </h3>
+        <div className="p-3 rounded border border-gray-200 bg-white space-y-2 shrink-0">
+          <h3 className="text-sm font-medium text-black">New Task</h3>
           <input
             type="text"
             value={newTitle}
             onChange={(e) => setNewTitle(e.target.value)}
             placeholder="Task title *"
-            className="w-full px-3 py-2 text-sm rounded border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white placeholder:light:text-gray-500 placeholder:dark:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 text-sm rounded border border-gray-300 bg-white text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <textarea
             value={newDescription}
             onChange={(e) => setNewDescription(e.target.value)}
             placeholder="Description (optional)"
             rows={2}
-            className="w-full px-3 py-2 text-sm rounded border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white placeholder:light:text-gray-500 placeholder:dark:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+            className="w-full px-3 py-2 text-sm rounded border border-gray-300 bg-white text-gray-900 placeholder:text-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
           />
           <div className="grid grid-cols-2 gap-2">
             <select
@@ -379,7 +377,7 @@ export default function TodoListMobile() {
               }
               title="Task priority"
               aria-label="Task priority"
-              className="px-2 py-1.5 text-xs rounded border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-2 py-1.5 text-xs rounded border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="low">Low</option>
               <option value="medium">Medium</option>
@@ -394,7 +392,7 @@ export default function TodoListMobile() {
               }
               title="Task status"
               aria-label="Task status"
-              className="px-2 py-1.5 text-xs rounded border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="px-2 py-1.5 text-xs rounded border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="pending">Pending</option>
               <option value="in-progress">In Progress</option>
@@ -407,7 +405,7 @@ export default function TodoListMobile() {
             onChange={(e) => setNewDueDate(e.target.value)}
             title="Task due date"
             aria-label="Task due date"
-            className="w-full px-2 py-1.5 text-xs rounded border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full px-2 py-1.5 text-xs rounded border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <div className="flex items-center gap-2">
             <button
@@ -439,14 +437,14 @@ export default function TodoListMobile() {
       {/* Task List */}
       <div className="flex-1 overflow-y-auto space-y-2 scrollbar-thin">
         {filteredTodos.length === 0 ? (
-          <div className="flex items-center justify-center h-full light:text-gray-500 dark:text-gray-400 text-sm">
+          <div className="flex items-center justify-center h-full text-black text-sm">
             No tasks found
           </div>
         ) : (
           filteredTodos.map((todo) => (
             <div
               key={todo.id}
-              className="p-3 rounded border light:border-gray-200 dark:border-white/10 light:bg-white dark:bg-black/20 hover:light:bg-gray-50 hover:dark:bg-white/5 transition-colors"
+              className="p-3 rounded border border-gray-200 bg-white hover:bg-gray-50 transition-colors"
             >
               {editingId === todo.id ? (
                 // Edit Mode
@@ -457,7 +455,7 @@ export default function TodoListMobile() {
                     onChange={(e) => setEditTitle(e.target.value)}
                     placeholder="Task title"
                     aria-label="Edit task title"
-                    className="w-full px-2 py-1.5 text-sm rounded border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-2 py-1.5 text-sm rounded border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <textarea
                     value={editDescription}
@@ -465,7 +463,7 @@ export default function TodoListMobile() {
                     rows={2}
                     placeholder="Task description"
                     aria-label="Edit task description"
-                    className="w-full px-2 py-1.5 text-sm rounded border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
+                    className="w-full px-2 py-1.5 text-sm rounded border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 resize-none"
                   />
                   <div className="grid grid-cols-2 gap-2">
                     <select
@@ -477,7 +475,7 @@ export default function TodoListMobile() {
                       }
                       title="Task priority"
                       aria-label="Edit task priority"
-                      className="px-2 py-1.5 text-xs rounded border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="px-2 py-1.5 text-xs rounded border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="low">Low</option>
                       <option value="medium">Medium</option>
@@ -495,7 +493,7 @@ export default function TodoListMobile() {
                       }
                       title="Task status"
                       aria-label="Edit task status"
-                      className="px-2 py-1.5 text-xs rounded border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="px-2 py-1.5 text-xs rounded border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     >
                       <option value="pending">Pending</option>
                       <option value="in-progress">In Progress</option>
@@ -508,7 +506,7 @@ export default function TodoListMobile() {
                     onChange={(e) => setEditDueDate(e.target.value)}
                     title="Task due date"
                     aria-label="Edit task due date"
-                    className="w-full px-2 py-1.5 text-xs rounded border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-2 py-1.5 text-xs rounded border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                   <div className="flex items-center gap-2">
                     <button
@@ -533,14 +531,14 @@ export default function TodoListMobile() {
                 // View Mode
                 <div className="space-y-2">
                   <div className="flex items-start justify-between gap-2">
-                    <h3 className="text-sm font-medium light:text-gray-900 dark:text-white flex-1">
+                    <h3 className="text-sm font-medium text-black flex-1">
                       {todo.title}
                     </h3>
                     <div className="flex items-center gap-1 shrink-0">
                       <button
                         onClick={() => startEdit(todo)}
                         disabled={loading}
-                        className="p-1 light:text-gray-600 dark:text-gray-400 light:hover:text-blue-600 dark:hover:text-blue-400 transition-colors disabled:opacity-50"
+                        className="p-1 text-gray-600 hover:text-blue-600 transition-colors disabled:opacity-50"
                         title="Edit task"
                       >
                         <Edit2 className="w-4 h-4" />
@@ -548,7 +546,7 @@ export default function TodoListMobile() {
                       <button
                         onClick={() => handleDeleteTodo(todo.id)}
                         disabled={loading}
-                        className="p-1 light:text-gray-600 dark:text-gray-400 light:hover:text-red-600 dark:hover:text-red-400 transition-colors disabled:opacity-50"
+                        className="p-1 text-gray-600 hover:text-red-600 transition-colors disabled:opacity-50"
                         title="Delete task"
                       >
                         <Trash2 className="w-4 h-4" />
@@ -556,9 +554,7 @@ export default function TodoListMobile() {
                     </div>
                   </div>
                   {todo.description && (
-                    <p className="text-xs light:text-gray-600 dark:text-gray-400">
-                      {todo.description}
-                    </p>
+                    <p className="text-xs text-black">{todo.description}</p>
                   )}
                   <div className="flex items-center gap-2 flex-wrap">
                     <span
@@ -580,7 +576,7 @@ export default function TodoListMobile() {
                           todo.status.slice(1)}
                     </span>
                     {todo.dueDate && (
-                      <span className="flex items-center gap-1 text-xs light:text-gray-600 dark:text-gray-400">
+                      <span className="flex items-center gap-1 text-xs text-black">
                         <Calendar className="w-3 h-3" />
                         {formatDate(todo.dueDate)}
                       </span>

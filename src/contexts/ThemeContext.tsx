@@ -20,6 +20,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState<string | null>(null);
 
+  // Initialize dark mode immediately
+  useEffect(() => {
+    document.documentElement.classList.add("dark");
+  }, []);
+
   // Listen to auth state and load theme from Firestore
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (user) => {
@@ -32,20 +37,28 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
             const savedTheme = userDoc.data()?.theme as Theme;
             if (savedTheme) {
               setTheme(savedTheme);
-              document.documentElement.classList.toggle(
-                "light",
-                savedTheme === "light"
-              );
+              if (savedTheme === "dark") {
+                document.documentElement.classList.add("dark");
+              } else {
+                document.documentElement.classList.remove("dark");
+              }
+            } else {
+              // No saved theme, ensure dark mode is on
+              document.documentElement.classList.add("dark");
             }
+          } else {
+            // No user preferences, ensure dark mode is on
+            document.documentElement.classList.add("dark");
           }
         } catch (error) {
           console.error("Error loading theme from server:", error);
+          document.documentElement.classList.add("dark");
         }
       } else {
         setUserId(null);
         // Use default dark theme when not logged in
         setTheme("dark");
-        document.documentElement.classList.remove("light");
+        document.documentElement.classList.add("dark");
       }
       setLoading(false);
     });
@@ -56,7 +69,12 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const toggleTheme = async () => {
     const newTheme = theme === "dark" ? "light" : "dark";
     setTheme(newTheme);
-    document.documentElement.classList.toggle("light", newTheme === "light");
+
+    if (newTheme === "dark") {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
 
     // Save to Firestore if user is logged in
     if (userId) {

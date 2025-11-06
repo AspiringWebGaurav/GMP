@@ -413,11 +413,11 @@ export default function ModernTimesheetMobile() {
   return (
     <div className="flex flex-col h-full overflow-hidden">
       {/* Mobile Header */}
-      <div className="shrink-0 p-3 border-b light:border-gray-200 dark:border-white/10 light:bg-white dark:bg-white/5">
+      <div className="shrink-0 p-3 border-b border-gray-200 bg-white">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Clock className="w-5 h-5 text-blue-600" />
-            <h2 className="text-base font-semibold light:text-gray-900 dark:text-white">
+            <h2 className="text-base font-semibold text-gray-900">
               Timesheet
             </h2>
           </div>
@@ -426,7 +426,7 @@ export default function ModernTimesheetMobile() {
             <div className="relative">
               <button
                 onClick={() => setShowWeekPicker(!showWeekPicker)}
-                className="p-2 bg-white dark:bg-black/40 border light:border-gray-300 dark:border-white/20 rounded-md hover:border-blue-500 transition-all"
+                className="p-2 bg-white border border-gray-300 rounded-md hover:border-blue-500 transition-all"
                 type="button"
                 title="Select date"
               >
@@ -437,18 +437,18 @@ export default function ModernTimesheetMobile() {
               {showWeekPicker && (
                 <div
                   ref={weekPickerRef}
-                  className="absolute top-full right-0 mt-2 w-72 bg-white dark:bg-gray-800 border light:border-gray-200 dark:border-white/20 rounded-lg shadow-xl z-50 p-3"
+                  className="absolute top-full right-0 mt-2 w-72 bg-white border border-gray-200 rounded-lg shadow-xl z-50 p-3"
                 >
                   <div className="flex items-center justify-between mb-3">
                     <button
                       onClick={() => navigateWeek("prev")}
-                      className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
+                      className="p-1.5 hover:bg-gray-100 rounded-md transition-colors"
                       type="button"
                       title="Previous week"
                     >
-                      <ChevronLeft className="w-4 h-4 light:text-gray-700 dark:text-gray-300" />
+                      <ChevronLeft className="w-4 h-4 text-gray-700" />
                     </button>
-                    <span className="text-sm font-semibold light:text-gray-900 dark:text-white">
+                    <span className="text-sm font-semibold text-gray-900">
                       {getWeekDays()[0].toLocaleDateString("en-US", {
                         month: "short",
                         year: "numeric",
@@ -456,11 +456,11 @@ export default function ModernTimesheetMobile() {
                     </span>
                     <button
                       onClick={() => navigateWeek("next")}
-                      className="p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
+                      className="p-1.5 hover:bg-gray-100 rounded-md transition-colors"
                       type="button"
                       title="Next week"
                     >
-                      <ChevronRight className="w-4 h-4 light:text-gray-700 dark:text-gray-300" />
+                      <ChevronRight className="w-4 h-4 text-gray-700" />
                     </button>
                   </div>
 
@@ -468,7 +468,7 @@ export default function ModernTimesheetMobile() {
                     {["M", "T", "W", "T", "F", "S", "S"].map((day, index) => (
                       <div
                         key={`${day}-${index}`}
-                        className="text-center text-xs font-semibold light:text-gray-600 dark:text-gray-400 py-1"
+                        className="text-center text-xs font-semibold text-gray-600 py-1"
                       >
                         {day}
                       </div>
@@ -481,8 +481,8 @@ export default function ModernTimesheetMobile() {
                           isSameDay(day, selectedDate)
                             ? "bg-blue-600 text-white font-semibold"
                             : isToday(day)
-                            ? "bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 font-medium"
-                            : "hover:bg-gray-100 dark:hover:bg-gray-700 light:text-gray-700 dark:text-gray-300"
+                            ? "bg-blue-100 text-blue-800 font-medium"
+                            : "hover:bg-gray-100 text-gray-700"
                         }`}
                         type="button"
                       >
@@ -496,7 +496,7 @@ export default function ModernTimesheetMobile() {
                       setSelectedDate(new Date());
                       setShowWeekPicker(false);
                     }}
-                    className="w-full mt-3 px-3 py-1.5 text-sm font-medium text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-md transition-colors"
+                    className="w-full mt-3 px-3 py-1.5 text-sm font-medium text-blue-600 hover:bg-blue-50 rounded-md transition-colors"
                     type="button"
                   >
                     Today
@@ -506,13 +506,13 @@ export default function ModernTimesheetMobile() {
             </div>
 
             <button
-              className="p-2 light:bg-green-600 dark:bg-green-700 hover:bg-green-700 text-white rounded-md"
+              className="p-2 bg-green-600 hover:bg-green-700 text-white rounded-md"
               title="Export PDF"
             >
               <Download className="w-4 h-4" />
             </button>
             <button
-              className="p-2 light:bg-purple-600 dark:bg-purple-700 hover:bg-purple-700 text-white rounded-md"
+              className="p-2 bg-purple-600 hover:bg-purple-700 text-white rounded-md"
               title="Email Report"
             >
               <Mail className="w-4 h-4" />
@@ -530,15 +530,15 @@ export default function ModernTimesheetMobile() {
 
         {/* Quick Add Entry Form */}
         {showNewEntry && (
-          <div className="mt-3 p-3 rounded-lg light:bg-linear-to-br light:from-blue-50 light:to-indigo-50 dark:bg-linear-to-br dark:from-blue-900/20 dark:to-indigo-900/20 border light:border-blue-200 dark:border-blue-800/30 space-y-3">
+          <div className="mt-3 p-3 rounded-lg bg-linear-to-br from-blue-50 to-indigo-50 border border-blue-200 space-y-3">
             {/* Entry Mode Toggle */}
-            <div className="flex items-center gap-2 p-2 bg-white dark:bg-black/40 border light:border-gray-300 dark:border-white/20 rounded-lg">
+            <div className="flex items-center gap-2 p-2 bg-white border border-gray-300 rounded-lg">
               <button
                 onClick={() => setEntryMode("hourly")}
                 className={`flex-1 px-3 py-2 text-xs font-medium rounded-md transition-all ${
                   entryMode === "hourly"
                     ? "bg-blue-600 text-white"
-                    : "text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    : "text-gray-700 hover:bg-gray-100"
                 }`}
                 type="button"
               >
@@ -549,7 +549,7 @@ export default function ModernTimesheetMobile() {
                 className={`flex-1 px-3 py-2 text-xs font-medium rounded-md transition-all ${
                   entryMode === "daily"
                     ? "bg-blue-600 text-white"
-                    : "text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-700"
+                    : "text-gray-700 hover:bg-gray-100"
                 }`}
                 type="button"
               >
@@ -557,12 +557,12 @@ export default function ModernTimesheetMobile() {
               </button>
             </div>{" "}
             {/* Mode Description */}
-            <div className="px-2 py-1.5 bg-white/50 dark:bg-black/20 rounded-md">
-              <span className="text-xs light:text-gray-600 dark:text-gray-400">
+            <div className="px-2 py-1.5 bg-white/50 rounded-md">
+              <span className="text-xs text-gray-600">
                 {entryMode === "hourly" ? (
                   <>
                     ⏱️{" "}
-                    <strong className="light:text-gray-900 dark:text-white">
+                    <strong className="text-gray-900">
                       Hourly:
                     </strong>{" "}
                     Track specific times
@@ -570,7 +570,7 @@ export default function ModernTimesheetMobile() {
                 ) : (
                   <>
                     📅{" "}
-                    <strong className="light:text-gray-900 dark:text-white">
+                    <strong className="text-gray-900">
                       Daily:
                     </strong>{" "}
                     Log full day (8hrs default)
@@ -586,7 +586,7 @@ export default function ModernTimesheetMobile() {
                       showTimePicker === "start" ? null : "start"
                     )
                   }
-                  className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-white dark:bg-black/40 border light:border-gray-300 dark:border-white/20 rounded-lg hover:border-blue-500 transition-all"
+                  className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg hover:border-blue-500 transition-all"
                   type="button"
                 >
                   <PlayCircle className="w-4 h-4 text-green-600" />
@@ -600,7 +600,7 @@ export default function ModernTimesheetMobile() {
                 {showTimePicker === "start" && (
                   <div
                     ref={timePickerRef}
-                    className="absolute top-full left-0 mt-2 w-full bg-white dark:bg-gray-800 border light:border-gray-200 dark:border-white/20 rounded-lg shadow-xl z-50 p-2"
+                    className="absolute top-full left-0 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-xl z-50 p-2"
                   >
                     <div className="text-xs font-semibold text-gray-600 mb-2 px-2">
                       Quick Select
@@ -610,14 +610,14 @@ export default function ModernTimesheetMobile() {
                         <button
                           key={time}
                           onClick={() => handleTimeSelect(time, "start")}
-                          className="px-2 py-1.5 text-xs rounded hover:bg-blue-100 dark:hover:bg-blue-900/30 text-gray-700 hover:text-blue-600 transition-all"
+                          className="px-2 py-1.5 text-xs rounded hover:bg-blue-100 text-gray-700 hover:text-blue-600 transition-all"
                           type="button"
                         >
                           {time}
                         </button>
                       ))}
                     </div>
-                    <div className="border-t light:border-gray-200 dark:border-white/10 mt-2 pt-2">
+                    <div className="border-t border-gray-200 mt-2 pt-2">
                       <input
                         type="time"
                         value={newEntry.startTime}
@@ -627,7 +627,7 @@ export default function ModernTimesheetMobile() {
                             startTime: e.target.value,
                           })
                         }
-                        className="w-full px-2 py-1.5 text-sm rounded border light:border-gray-300 dark:border-white/10 light:bg-gray-50 dark:bg-black/20 light:text-gray-900 dark:text-white"
+                        className="w-full px-2 py-1.5 text-sm rounded border border-gray-300 bg-gray-50 text-gray-900"
                         title="Start time"
                         aria-label="Start time"
                       />
@@ -636,14 +636,14 @@ export default function ModernTimesheetMobile() {
                 )}
               </div>
 
-              <ChevronRight className="w-4 h-4 light:text-gray-400 dark:text-gray-600" />
+              <ChevronRight className="w-4 h-4 text-gray-400" />
 
               <div className="relative flex-1">
                 <button
                   onClick={() =>
                     setShowTimePicker(showTimePicker === "end" ? null : "end")
                   }
-                  className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-white dark:bg-black/40 border light:border-gray-300 dark:border-white/20 rounded-lg hover:border-blue-500 transition-all"
+                  className="w-full flex items-center justify-center gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg hover:border-blue-500 transition-all"
                   type="button"
                 >
                   <StopCircle className="w-4 h-4 text-red-600" />
@@ -657,7 +657,7 @@ export default function ModernTimesheetMobile() {
                 {showTimePicker === "end" && (
                   <div
                     ref={timePickerRef}
-                    className="absolute top-full left-0 mt-2 w-full bg-white dark:bg-gray-800 border light:border-gray-200 dark:border-white/20 rounded-lg shadow-xl z-50 p-2"
+                    className="absolute top-full left-0 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-xl z-50 p-2"
                   >
                     <div className="text-xs font-semibold text-gray-600 mb-2 px-2">
                       Quick Select
@@ -667,21 +667,21 @@ export default function ModernTimesheetMobile() {
                         <button
                           key={time}
                           onClick={() => handleTimeSelect(time, "end")}
-                          className="px-2 py-1.5 text-xs rounded hover:bg-blue-100 dark:hover:bg-blue-900/30 text-gray-700 hover:text-blue-600 transition-all"
+                          className="px-2 py-1.5 text-xs rounded hover:bg-blue-100 text-gray-700 hover:text-blue-600 transition-all"
                           type="button"
                         >
                           {time}
                         </button>
                       ))}
                     </div>
-                    <div className="border-t light:border-gray-200 dark:border-white/10 mt-2 pt-2">
+                    <div className="border-t border-gray-200 mt-2 pt-2">
                       <input
                         type="time"
                         value={newEntry.endTime}
                         onChange={(e) =>
                           setNewEntry({ ...newEntry, endTime: e.target.value })
                         }
-                        className="w-full px-2 py-1.5 text-sm rounded border light:border-gray-300 dark:border-white/10 light:bg-gray-50 dark:bg-black/20 light:text-gray-900 dark:text-white"
+                        className="w-full px-2 py-1.5 text-sm rounded border border-gray-300 bg-gray-50 text-gray-900"
                         title="End time"
                         aria-label="End time"
                       />
@@ -691,7 +691,7 @@ export default function ModernTimesheetMobile() {
               </div>
             </div>
             {newEntry.startTime && newEntry.endTime && (
-              <div className="flex items-center justify-center gap-1.5 px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-md text-xs font-medium">
+              <div className="flex items-center justify-center gap-1.5 px-2 py-1 bg-blue-100 text-blue-800 rounded-md text-xs font-medium">
                 <Clock className="w-3 h-3" />
                 {calculateDuration(
                   newEntry.startTime,
@@ -704,11 +704,11 @@ export default function ModernTimesheetMobile() {
             <div className="relative">
               <button
                 onClick={() => setShowWeekPicker(!showWeekPicker)}
-                className="w-full flex items-center justify-between gap-2 px-3 py-2 bg-white dark:bg-black/40 border light:border-gray-300 dark:border-white/20 rounded-lg hover:border-blue-500 transition-all"
+                className="w-full flex items-center justify-between gap-2 px-3 py-2 bg-white border border-gray-300 rounded-lg hover:border-blue-500 transition-all"
                 type="button"
               >
                 <div className="flex items-center gap-2">
-                  <Calendar className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                  <Calendar className="w-4 h-4 text-blue-600" />
                   <span className="text-sm font-medium text-gray-900">
                     {selectedDate.toLocaleDateString("en-US", {
                       weekday: "short",
@@ -722,7 +722,7 @@ export default function ModernTimesheetMobile() {
               {showWeekPicker && (
                 <div
                   ref={weekPickerRef}
-                  className="absolute top-full left-0 mt-2 w-full bg-white dark:bg-gray-800 border light:border-gray-200 dark:border-white/20 rounded-lg shadow-xl z-50 p-3"
+                  className="absolute top-full left-0 mt-2 w-full bg-white border border-gray-200 rounded-lg shadow-xl z-50 p-3"
                 >
                   <div className="flex items-center justify-between mb-3">
                     <button
@@ -731,7 +731,7 @@ export default function ModernTimesheetMobile() {
                         newDate.setDate(newDate.getDate() - 7);
                         setWeekViewDate(newDate);
                       }}
-                      className="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                      className="p-1.5 rounded hover:bg-gray-100 transition-colors"
                       type="button"
                       aria-label="Previous week"
                     >
@@ -749,7 +749,7 @@ export default function ModernTimesheetMobile() {
                         newDate.setDate(newDate.getDate() + 7);
                         setWeekViewDate(newDate);
                       }}
-                      className="p-1.5 rounded hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                      className="p-1.5 rounded hover:bg-gray-100 transition-colors"
                       type="button"
                       aria-label="Next week"
                     >
@@ -761,7 +761,7 @@ export default function ModernTimesheetMobile() {
                     {["S", "M", "T", "W", "T", "F", "S"].map((day, idx) => (
                       <div
                         key={idx}
-                        className="text-center text-xs font-medium light:text-gray-500 dark:text-gray-400"
+                        className="text-center text-xs font-medium text-gray-500"
                       >
                         {day}
                       </div>
@@ -783,8 +783,8 @@ export default function ModernTimesheetMobile() {
                             isSelected
                               ? "bg-blue-600 text-white"
                               : isToday
-                              ? "bg-blue-100 dark:bg-blue-900/30 text-blue-600"
-                              : "hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700"
+                              ? "bg-blue-100 text-blue-600"
+                              : "hover:bg-gray-100 text-gray-700"
                           }`}
                           type="button"
                         >
@@ -800,7 +800,7 @@ export default function ModernTimesheetMobile() {
                       setWeekViewDate(new Date());
                       setShowWeekPicker(false);
                     }}
-                    className="w-full mt-2 px-2 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded transition-colors"
+                    className="w-full mt-2 px-2 py-1.5 text-xs font-medium text-blue-600 hover:bg-blue-50 rounded transition-colors"
                     type="button"
                   >
                     Today
@@ -845,7 +845,7 @@ export default function ModernTimesheetMobile() {
                   }
                 }}
                 rows={3}
-                className="w-full px-3 py-2 text-sm rounded-lg border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white resize-none"
+                className="w-full px-3 py-2 text-sm rounded-lg border border-gray-300 bg-white text-gray-900 resize-none"
                 placeholder="What did you work on? (use #tags)&#10;Press Enter to add bullet points"
               />
             </div>
@@ -854,7 +854,7 @@ export default function ModernTimesheetMobile() {
                 {newEntry.tags.map((tag) => (
                   <span
                     key={tag}
-                    className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 text-xs rounded-full"
+                    className="px-2 py-0.5 bg-blue-100 text-blue-800 text-xs rounded-full"
                   >
                     #{tag}
                   </span>
@@ -883,8 +883,8 @@ export default function ModernTimesheetMobile() {
           </div>
         ) : dayGroups.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center">
-            <Calendar className="w-12 h-12 light:text-gray-400 dark:text-gray-600 mb-3" />
-            <p className="text-sm light:text-gray-600 dark:text-gray-400">
+            <Calendar className="w-12 h-12 text-gray-400 mb-3" />
+            <p className="text-sm text-gray-600">
               No entries yet. Click "Add Entry" to get started!
             </p>
           </div>
@@ -892,79 +892,79 @@ export default function ModernTimesheetMobile() {
           dayGroups.map((dayGroup) => (
             <div
               key={dayGroup.date}
-              className="light:bg-white dark:bg-white/5 rounded-lg border light:border-gray-200 dark:border-white/10 overflow-hidden"
+              className="bg-white rounded-lg border border-gray-200 overflow-hidden"
             >
               {/* Day Header - Collapsible */}
               <button
                 onClick={() => toggleDay(dayGroup.date)}
-                className="w-full p-3 light:bg-gray-50 dark:bg-black/20 flex items-center justify-between"
+                className="w-full p-3 bg-gray-50 flex items-center justify-between"
               >
                 <div className="text-left">
-                  <h3 className="text-sm font-semibold light:text-gray-900 dark:text-white">
+                  <h3 className="text-sm font-semibold text-gray-900">
                     {new Date(dayGroup.date).toLocaleDateString("en-US", {
                       weekday: "short",
                       month: "short",
                       day: "numeric",
                     })}
                   </h3>
-                  <p className="text-xs light:text-gray-600 dark:text-gray-400">
+                  <p className="text-xs text-gray-600">
                     {dayGroup.entries.length} entries ·{" "}
                     {dayGroup.totalHours.toFixed(1)}h
                   </p>
                 </div>
                 {expandedDays.has(dayGroup.date) ? (
-                  <ChevronUp className="w-5 h-5 light:text-gray-600 dark:text-gray-400" />
+                  <ChevronUp className="w-5 h-5 text-gray-600" />
                 ) : (
-                  <ChevronDown className="w-5 h-5 light:text-gray-600 dark:text-gray-400" />
+                  <ChevronDown className="w-5 h-5 text-gray-600" />
                 )}
               </button>
 
               {/* Day Entries */}
               {expandedDays.has(dayGroup.date) && (
-                <div className="p-3 space-y-2.5 border-t light:border-gray-200 dark:border-white/10">
+                <div className="p-3 space-y-2.5 border-t border-gray-200">
                   {dayGroup.entries.map((entry, index) => (
                     <div
                       key={entry.id}
-                      className="relative pl-6 pr-3 py-3 rounded-lg light:bg-linear-to-r light:from-gray-50 light:to-white dark:bg-linear-to-r dark:from-black/20 dark:to-transparent border light:border-gray-200 dark:border-white/5"
+                      className="relative pl-6 pr-3 py-3 rounded-lg bg-linear-to-r from-gray-50 to-white border border-gray-200"
                     >
                       {/* Bullet Point */}
                       <div className="absolute left-2 top-4 flex flex-col items-center">
                         <Circle className="w-2.5 h-2.5 fill-blue-600 text-blue-600" />
                         {index < dayGroup.entries.length - 1 && (
-                          <div className="w-0.5 h-full bg-linear-to-b from-blue-300 to-transparent dark:from-blue-700 dark:to-transparent mt-1"></div>
+                          <div className="w-0.5 h-full bg-linear-to-b from-blue-300 to-transparent mt-1"></div>
                         )}
                       </div>
 
                       <div className="flex items-start justify-between gap-2 mb-2">
                         <div className="flex flex-wrap items-center gap-1.5 text-xs font-semibold">
-                          <div className="flex items-center gap-1 px-2 py-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 rounded-md">
+                          <div className="flex items-center gap-1 px-2 py-1 bg-green-100 text-green-800 rounded-md">
                             <PlayCircle className="w-3 h-3" />
                             {convert24To12Display(entry.startTime)}
                           </div>
                           {entry.endTime && (
                             <>
-                              <ChevronRight className="w-3 h-3 light:text-gray-400 dark:text-gray-600" />
-                              <div className="flex items-center gap-1 px-2 py-1 bg-red-100 dark:bg-red-900/30 text-red-800 dark:text-red-300 rounded-md">
+                              <ChevronRight className="w-3 h-3 text-gray-400" />
+                              <div className="flex items-center gap-1 px-2 py-1 bg-red-100 text-red-800 rounded-md">
                                 <StopCircle className="w-3 h-3" />
                                 {convert24To12Display(entry.endTime)}
                               </div>
                             </>
                           )}
-                          <div className="flex items-center gap-1 px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 rounded-md">
+                          <div className="flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-800 rounded-md">
                             <Clock className="w-3 h-3" />
                             {entry.duration.toFixed(1)}h
                           </div>
                         </div>
                         <button
                           onClick={() => handleDeleteEntry(entry.id)}
-                          className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-md transition-colors"
+                          className="p-1.5 hover:bg-red-100 rounded-md transition-colors"
                           title="Delete"
                         >
                           <Trash2 className="w-4 h-4 text-red-600" />
                         </button>
                       </div>
                       {entry.description && (
-                        <p className="text-sm light:text-gray-700 dark:text-gray-200 mb-2 leading-relaxed">
+                        <p className="text-sm text-gray-700 mb-2 leading-relaxed">
                           {entry.description}
                         </p>
                       )}
@@ -973,7 +973,7 @@ export default function ModernTimesheetMobile() {
                           {entry.tags.map((tag) => (
                             <span
                               key={tag}
-                              className="px-2.5 py-1 bg-purple-100 dark:bg-purple-900/30 text-purple-800 dark:text-purple-300 text-xs font-medium rounded-full flex items-center gap-1 shadow-sm"
+                              className="px-2.5 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full flex items-center gap-1 shadow-sm"
                             >
                               <Tag className="w-3 h-3" />
                               {tag}
@@ -982,7 +982,7 @@ export default function ModernTimesheetMobile() {
                         </div>
                       )}
                       {entry.isDraft && (
-                        <span className="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 bg-yellow-100 dark:bg-yellow-900/30 text-yellow-800 dark:text-yellow-300 text-xs font-medium rounded-full">
+                        <span className="inline-flex items-center gap-1.5 mt-2 px-2.5 py-1 bg-yellow-100 text-yellow-800 text-xs font-medium rounded-full">
                           <Clock className="w-3 h-3 animate-pulse" />
                           In Progress
                         </span>

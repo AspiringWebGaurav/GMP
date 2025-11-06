@@ -5,23 +5,23 @@ import { Github, Linkedin, Shield, Zap } from "lucide-react";
 export default function Footer() {
   const year = new Date().getFullYear();
   return (
-    <footer className="w-full border-t light:border-gray-200 dark:border-white/10 light:bg-white dark:bg-black backdrop-blur-lg">
+    <footer className="w-full border-t border-gray-200 bg-white backdrop-blur-lg">
       <div className="w-full px-6 py-3">
         {/* Desktop & Tablet Layout */}
         <div className="hidden sm:flex items-center justify-between w-full">
           {/* Left: Content with Icon */}
           <div className="flex items-center gap-3">
-            <div className="p-2 rounded-lg light:bg-blue-50 dark:bg-blue-500/10 border light:border-blue-200 dark:border-blue-500/20">
-              <Shield className="w-4 h-4 light:text-blue-600 dark:text-blue-400" />
+            <div className="p-2 rounded-lg bg-blue-50 border border-blue-200">
+              <Shield className="w-4 h-4 text-blue-600" />
             </div>
             <div className="text-sm">
-              <p className="font-semibold light:text-gray-900 dark:text-white flex items-center gap-2">
+              <p className="font-semibold text-gray-900 flex items-center gap-2">
                 Made exclusively for Gaurav
-                <span className="px-2 py-0.5 text-[10px] font-medium rounded-full light:bg-purple-100 dark:bg-purple-500/20 light:text-purple-700 dark:text-purple-400">
+                <span className="px-2 py-0.5 text-[10px] font-medium rounded-full bg-purple-100 text-purple-700">
                   PRIVATE
                 </span>
               </p>
-              <p className="text-xs light:text-gray-500 dark:text-gray-400 mt-0.5">
+              <p className="text-xs text-gray-500 mt-0.5">
                 © {year} GMP — Personal use only
               </p>
             </div>
@@ -29,18 +29,18 @@ export default function Footer() {
 
           {/* Center: Enhanced Status */}
           <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg light:bg-green-50 dark:bg-green-500/10 border light:border-green-200 dark:border-green-500/20">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-green-50 border border-green-200">
               <span className="relative flex h-2.5 w-2.5">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
               </span>
-              <span className="text-xs font-medium light:text-green-700 dark:text-green-400">
+              <span className="text-xs font-medium text-green-700">
                 System Active
               </span>
             </div>
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg light:bg-blue-50 dark:bg-blue-500/10 border light:border-blue-200 dark:border-blue-500/20">
-              <Zap className="w-3.5 h-3.5 light:text-blue-600 dark:text-blue-400" />
-              <span className="text-xs font-medium light:text-blue-700 dark:text-blue-400">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-blue-50 border border-blue-200">
+              <Zap className="w-3.5 h-3.5 text-blue-600" />
+              <span className="text-xs font-medium text-blue-700">
                 Secure & Private
               </span>
             </div>
@@ -49,8 +49,8 @@ export default function Footer() {
           {/* Right: Version & Social with Enhanced Design */}
           <div className="flex items-center gap-4">
             {/* Version with Badge */}
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg light:bg-gray-100 dark:bg-white/5 border light:border-gray-200 dark:border-white/10">
-              <span className="text-xs font-medium light:text-gray-600 dark:text-gray-400">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-gray-100 border border-gray-200">
+              <span className="text-xs font-medium text-gray-600">
                 Version:
               </span>
               <VersionWithChangelog />
@@ -62,19 +62,19 @@ export default function Footer() {
                 href="https://github.com/gauravpatil9262"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2.5 light:bg-gray-100 dark:bg-white/5 light:hover:bg-gray-900 dark:hover:bg-white light:hover:text-white dark:hover:text-black rounded-lg transition-all duration-200 border light:border-gray-200 dark:border-white/10 group hover:scale-105"
+                className="p-2.5 bg-gray-100 hover:bg-gray-900 hover:text-white rounded-lg transition-all duration-200 border border-gray-200 group hover:scale-105"
                 aria-label="GitHub Profile"
               >
-                <Github className="w-4 h-4 light:text-gray-700 dark:text-gray-300 light:group-hover:text-white dark:group-hover:text-black transition-colors" />
+                <Github className="w-4 h-4 text-gray-700 group-hover:text-white transition-colors" />
               </a>
               <a
                 href="https://linkedin.com/in/gauravpatil9262"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2.5 light:bg-gray-100 dark:bg-white/5 light:hover:bg-blue-600 dark:hover:bg-blue-500 light:hover:text-white dark:hover:text-white rounded-lg transition-all duration-200 border light:border-gray-200 dark:border-white/10 group hover:scale-105"
+                className="p-2.5 bg-gray-100 hover:bg-blue-600 hover:text-white rounded-lg transition-all duration-200 border border-gray-200 group hover:scale-105"
                 aria-label="LinkedIn Profile"
               >
-                <Linkedin className="w-4 h-4 light:text-gray-700 dark:text-gray-300 light:group-hover:text-white dark:group-hover:text-white transition-colors" />
+                <Linkedin className="w-4 h-4 text-gray-700 group-hover:text-white transition-colors" />
               </a>
             </div>
           </div>
@@ -84,17 +84,17 @@ export default function Footer() {
         <div className="flex flex-col gap-3 sm:hidden">
           {/* Top Row: Content with Badge */}
           <div className="flex items-center justify-center gap-2">
-            <div className="p-1.5 rounded-lg light:bg-blue-50 dark:bg-blue-500/10 border light:border-blue-200 dark:border-blue-500/20">
-              <Shield className="w-3.5 h-3.5 light:text-blue-600 dark:text-blue-400" />
+            <div className="p-1.5 rounded-lg bg-blue-50 border border-blue-200">
+              <Shield className="w-3.5 h-3.5 text-blue-600" />
             </div>
             <div className="text-center">
-              <p className="text-sm font-semibold light:text-gray-900 dark:text-white flex items-center gap-2">
+              <p className="text-sm font-semibold text-gray-900 flex items-center gap-2">
                 Made exclusively for Gaurav
-                <span className="px-1.5 py-0.5 text-[9px] font-medium rounded-full light:bg-purple-100 dark:bg-purple-500/20 light:text-purple-700 dark:text-purple-400">
+                <span className="px-1.5 py-0.5 text-[9px] font-medium rounded-full bg-purple-100 text-purple-700">
                   PRIVATE
                 </span>
               </p>
-              <p className="text-xs light:text-gray-500 dark:text-gray-400 mt-0.5">
+              <p className="text-xs text-gray-500 mt-0.5">
                 © {year} GMP — Personal use only
               </p>
             </div>
@@ -108,36 +108,36 @@ export default function Footer() {
                 href="https://github.com/gauravpatil9262"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 light:bg-gray-100 dark:bg-white/5 light:hover:bg-gray-900 dark:hover:bg-white rounded-lg transition-all border light:border-gray-200 dark:border-white/10 group"
+                className="p-2 bg-gray-100 hover:bg-gray-900 rounded-lg transition-all border border-gray-200 group"
                 aria-label="GitHub Profile"
               >
-                <Github className="w-4 h-4 light:text-gray-700 dark:text-gray-300 light:group-hover:text-white dark:group-hover:text-black transition-colors" />
+                <Github className="w-4 h-4 text-gray-700 group-hover:text-white transition-colors" />
               </a>
               <a
                 href="https://linkedin.com/in/gauravpatil9262"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="p-2 light:bg-gray-100 dark:bg-white/5 light:hover:bg-blue-600 dark:hover:bg-blue-500 rounded-lg transition-all border light:border-gray-200 dark:border-white/10 group"
+                className="p-2 bg-gray-100 hover:bg-blue-600 rounded-lg transition-all border border-gray-200 group"
                 aria-label="LinkedIn Profile"
               >
-                <Linkedin className="w-4 h-4 light:text-gray-700 dark:text-gray-300 light:group-hover:text-white dark:group-hover:text-white transition-colors" />
+                <Linkedin className="w-4 h-4 text-gray-700 group-hover:text-white transition-colors" />
               </a>
             </div>
 
             {/* Status Badge */}
-            <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg light:bg-green-50 dark:bg-green-500/10 border light:border-green-200 dark:border-green-500/20">
+            <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-green-50 border border-green-200">
               <span className="relative flex h-2 w-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
               </span>
-              <span className="text-[10px] font-medium light:text-green-700 dark:text-green-400">
+              <span className="text-[10px] font-medium text-green-700">
                 ACTIVE
               </span>
             </div>
 
             {/* Version */}
-            <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg light:bg-gray-100 dark:bg-white/5 border light:border-gray-200 dark:border-white/10">
-              <span className="text-[10px] font-medium light:text-gray-600 dark:text-gray-400">
+            <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-gray-100 border border-gray-200">
+              <span className="text-[10px] font-medium text-gray-600">
                 v:
               </span>
               <VersionWithChangelog />

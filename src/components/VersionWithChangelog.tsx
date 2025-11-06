@@ -372,10 +372,10 @@ export default function VersionWithChangelog() {
     <>
       <button
         onClick={() => setShowConfirm(true)}
-        className="group relative inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-all duration-200 light:bg-blue-50 dark:bg-blue-500/10 light:text-blue-700 dark:text-blue-400 light:hover:bg-blue-100 dark:hover:bg-blue-500/20 light:border light:border-blue-200 dark:border dark:border-blue-500/30 hover:scale-105 active:scale-95"
+        className="group relative inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold transition-all duration-200 bg-blue-50 text-blue-700 hover:bg-blue-100 border border-blue-200 hover:scale-105 active:scale-95"
         aria-label="View version changelog"
       >
-        <span className="light:text-blue-600 dark:text-blue-400">
+        <span className="text-blue-600">
           {version}
         </span>
         <svg

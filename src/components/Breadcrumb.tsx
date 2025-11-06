@@ -72,7 +72,7 @@ export default function Breadcrumb({
   }
 
   return (
-    <nav className="light:bg-gray-50/50 dark:bg-linear-to-r dark:from-slate-900/30 dark:via-slate-800/20 dark:to-transparent border-b light:border-gray-200 dark:border-white/10">
+    <nav className="bg-gray-50/50 border-b border-gray-200">
       <div className="px-4 md:px-6 py-2.5">
         <ol className="flex items-center gap-1 text-xs overflow-x-auto scrollbar-hide">
           {breadcrumbs.map((crumb, index) => {
@@ -84,17 +84,17 @@ export default function Breadcrumb({
                 className="flex items-center gap-1 group"
               >
                 {index > 0 && (
-                  <ChevronRight className="w-3.5 h-3.5 light:text-gray-400 dark:text-gray-600 shrink-0" />
+                  <ChevronRight className="w-3.5 h-3.5 text-gray-400 shrink-0" />
                 )}
                 {isLast || !crumb.href ? (
-                  <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-600/15 light:text-blue-700 dark:text-blue-400 font-medium whitespace-nowrap">
+                  <span className="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-blue-600/15 text-blue-700 font-medium whitespace-nowrap">
                     {crumb.isHome && <Home className="w-3.5 h-3.5" />}
                     <span className="text-xs">{crumb.label}</span>
                   </span>
                 ) : (
                   <Link
                     href={crumb.href}
-                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-md light:text-gray-600 dark:text-gray-400 light:hover:text-gray-900 dark:hover:text-white light:hover:bg-gray-100 dark:hover:bg-white/5 transition-all whitespace-nowrap"
+                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-md text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-all whitespace-nowrap"
                   >
                     {crumb.isHome && <Home className="w-3.5 h-3.5" />}
                     <span className="text-xs">{crumb.label}</span>

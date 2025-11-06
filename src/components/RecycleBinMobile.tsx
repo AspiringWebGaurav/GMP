@@ -156,17 +156,17 @@ export default function RecycleBinMobile() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 pb-20">
+    <div className="min-h-screen bg-gray-50 pb-20">
       {/* Header */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 p-4 sticky top-0 z-10">
+      <div className="bg-white border-b border-gray-200 p-4 sticky top-0 z-10">
         {/* Navigation */}
         <div className="flex items-center gap-2 mb-4">
           <button
             onClick={() => router.back()}
-            className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+            className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-colors"
             aria-label="Go back"
           >
-            <ArrowLeft className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+            <ArrowLeft className="w-5 h-5 text-gray-700" />
           </button>
           <button
             onClick={() => router.push("/dashboard")}
@@ -178,14 +178,14 @@ export default function RecycleBinMobile() {
         </div>
 
         <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 bg-red-100 dark:bg-red-900/30 rounded-lg">
-            <Trash2 className="w-6 h-6 text-red-600 dark:text-red-400" />
+          <div className="p-2 bg-red-100 rounded-lg">
+            <Trash2 className="w-6 h-6 text-red-600" />
           </div>
           <div>
-            <h1 className="text-xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-xl font-bold text-gray-900">
               Recycle Bin
             </h1>
-            <p className="text-xs text-gray-600 dark:text-gray-400">
+            <p className="text-xs text-gray-600">
               Items auto-delete after expiry
             </p>
           </div>
@@ -199,7 +199,7 @@ export default function RecycleBinMobile() {
             placeholder="Search..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 text-sm"
           />
         </div>
 
@@ -217,7 +217,7 @@ export default function RecycleBinMobile() {
               className={`px-3 py-1.5 rounded-full text-sm font-medium whitespace-nowrap ${
                 selectedSource === tab.value
                   ? "bg-red-600 text-white"
-                  : "bg-gray-100 dark:bg-gray-700 text-gray-900 dark:text-white"
+                  : "bg-gray-100 text-gray-900"
               }`}
             >
               {tab.label} ({tab.count})
@@ -227,21 +227,21 @@ export default function RecycleBinMobile() {
       </div>
 
       {/* Stats */}
-      <div className="p-4 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+      <div className="p-4 bg-white border-b border-gray-200">
         <div className="grid grid-cols-3 gap-3">
           <div className="text-center">
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">
+            <div className="text-2xl font-bold text-gray-900">
               {stats.total}
             </div>
-            <div className="text-xs text-gray-600 dark:text-gray-400">
+            <div className="text-xs text-gray-600">
               Total
             </div>
           </div>
           <div className="text-center">
-            <div className="text-2xl font-bold text-red-600 dark:text-red-400">
+            <div className="text-2xl font-bold text-red-600">
               {stats.expiringWithin24Hours}
             </div>
-            <div className="text-xs text-gray-600 dark:text-gray-400">
+            <div className="text-xs text-gray-600">
               Expiring
             </div>
           </div>
@@ -260,9 +260,9 @@ export default function RecycleBinMobile() {
       {/* Items List */}
       <div className="p-4 space-y-3">
         {filteredItems.length === 0 ? (
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-8 text-center">
-            <Trash2 className="w-12 h-12 text-gray-300 dark:text-gray-600 mx-auto mb-3" />
-            <p className="text-gray-600 dark:text-gray-400 text-sm">
+          <div className="bg-white rounded-lg p-8 text-center">
+            <Trash2 className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+            <p className="text-gray-600 text-sm">
               {searchTerm || selectedSource !== "all"
                 ? "No items found"
                 : "Recycle Bin is empty"}
@@ -278,7 +278,7 @@ export default function RecycleBinMobile() {
             return (
               <div
                 key={item.id}
-                className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4"
+                className="bg-white rounded-lg shadow-sm p-4"
               >
                 {/* Header */}
                 <div className="flex items-start gap-3 mb-3">
@@ -288,24 +288,24 @@ export default function RecycleBinMobile() {
                     {getSourceIcon(item.source)}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="font-semibold text-gray-900 dark:text-white text-sm truncate">
+                    <h3 className="font-semibold text-gray-900 text-sm truncate">
                       {preview.title}
                     </h3>
-                    <p className="text-xs text-gray-600 dark:text-gray-400 line-clamp-2 mt-1">
+                    <p className="text-xs text-gray-600 line-clamp-2 mt-1">
                       {preview.description}
                     </p>
                   </div>
                 </div>
 
                 {/* Meta */}
-                <div className="text-xs text-gray-500 dark:text-gray-400 mb-3 space-y-1">
+                <div className="text-xs text-gray-500 mb-3 space-y-1">
                   <div>
                     Deleted: {new Date(item.deletedAt).toLocaleDateString()}
                   </div>
                   <div
                     className={
                       expiringSoon
-                        ? "text-red-600 dark:text-red-400 font-semibold"
+                        ? "text-red-600 font-semibold"
                         : ""
                     }
                   >
@@ -343,7 +343,7 @@ export default function RecycleBinMobile() {
                   </button>
                   <button
                     onClick={() => setExpandedItem(isExpanded ? null : item.id)}
-                    className="px-3 py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg text-sm"
+                    className="px-3 py-2 bg-gray-200 text-gray-900 rounded-lg text-sm"
                   >
                     {isExpanded ? "Hide" : "Details"}
                   </button>
@@ -351,8 +351,8 @@ export default function RecycleBinMobile() {
 
                 {/* Expanded */}
                 {isExpanded && (
-                  <div className="mt-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                    <pre className="text-xs text-gray-700 dark:text-gray-300 overflow-auto">
+                  <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+                    <pre className="text-xs text-gray-700 overflow-auto">
                       {JSON.stringify(item.data, null, 2)}
                     </pre>
                   </div>

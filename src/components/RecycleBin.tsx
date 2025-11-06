@@ -132,13 +132,13 @@ export default function RecycleBin() {
   const getSourceColor = (source: RecycleBinItemSource) => {
     switch (source) {
       case "todo":
-        return "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200";
+        return "bg-blue-100 text-blue-800";
       case "timesheet":
-        return "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200";
+        return "bg-green-100 text-green-800";
       case "time-tracker":
-        return "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200";
+        return "bg-purple-100 text-purple-800";
       case "notification":
-        return "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200";
+        return "bg-yellow-100 text-yellow-800";
     }
   };
 
@@ -191,20 +191,20 @@ export default function RecycleBin() {
   };
 
   return (
-    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 p-6">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-100 p-6">
       <div className="max-w-7xl mx-auto">
         {/* Breadcrumb Navigation */}
         <div className="mb-6">
           <div className="flex items-center gap-2 text-sm">
             <button
               onClick={() => router.push("/dashboard")}
-              className="flex items-center gap-2 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
             >
               <Home className="w-4 h-4" />
               <span>Dashboard</span>
             </button>
-            <span className="text-gray-400 dark:text-gray-600">/</span>
-            <span className="text-gray-900 dark:text-white font-medium">
+            <span className="text-gray-400">/</span>
+            <span className="text-gray-900 font-medium">
               Recycle Bin
             </span>
           </div>
@@ -216,19 +216,19 @@ export default function RecycleBin() {
             <div className="flex items-center gap-3">
               <button
                 onClick={() => router.back()}
-                className="p-2 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                className="p-2 rounded-lg bg-white border border-gray-200 hover:bg-gray-50 transition-colors"
                 title="Go back"
               >
-                <ArrowLeft className="w-5 h-5 text-gray-700 dark:text-gray-300" />
+                <ArrowLeft className="w-5 h-5 text-gray-700" />
               </button>
-              <div className="p-3 bg-red-100 dark:bg-red-900/30 rounded-lg">
-                <Trash2 className="w-8 h-8 text-red-600 dark:text-red-400" />
+              <div className="p-3 bg-red-100 rounded-lg">
+                <Trash2 className="w-8 h-8 text-red-600" />
               </div>
               <div>
-                <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
+                <h1 className="text-3xl font-bold text-gray-900">
                   Recycle Bin
                 </h1>
-                <p className="text-gray-600 dark:text-gray-400 text-sm">
+                <p className="text-gray-600 text-sm">
                   Deleted items are kept for 15-30 days before permanent
                   deletion
                 </p>
@@ -246,50 +246,50 @@ export default function RecycleBin() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
-            <div className="text-2xl font-bold text-gray-900 dark:text-white">
+          <div className="bg-white rounded-lg p-4 shadow-sm">
+            <div className="text-2xl font-bold text-gray-900">
               {stats.total}
             </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">
+            <div className="text-sm text-gray-600">
               Total Items
             </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
-            <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+          <div className="bg-white rounded-lg p-4 shadow-sm">
+            <div className="text-2xl font-bold text-blue-600">
               {stats.todos}
             </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">
+            <div className="text-sm text-gray-600">
               Todos
             </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
-            <div className="text-2xl font-bold text-green-600 dark:text-green-400">
+          <div className="bg-white rounded-lg p-4 shadow-sm">
+            <div className="text-2xl font-bold text-green-600">
               {stats.timesheets}
             </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">
+            <div className="text-sm text-gray-600">
               Timesheets
             </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
-            <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">
+          <div className="bg-white rounded-lg p-4 shadow-sm">
+            <div className="text-2xl font-bold text-purple-600">
               {stats.timeLogs}
             </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">
+            <div className="text-sm text-gray-600">
               Time Logs
             </div>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
-            <div className="text-2xl font-bold text-red-600 dark:text-red-400">
+          <div className="bg-white rounded-lg p-4 shadow-sm">
+            <div className="text-2xl font-bold text-red-600">
               {stats.expiringWithin24Hours}
             </div>
-            <div className="text-sm text-gray-600 dark:text-gray-400">
+            <div className="text-sm text-gray-600">
               Expiring Soon
             </div>
           </div>
         </div>
 
         {/* Filters */}
-        <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm mb-6">
+        <div className="bg-white rounded-lg p-4 shadow-sm mb-6">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
             {/* Search */}
             <div className="relative">
@@ -299,7 +299,7 @@ export default function RecycleBin() {
                 placeholder="Search items..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900"
               />
             </div>
 
@@ -309,7 +309,7 @@ export default function RecycleBin() {
               <select
                 value={selectedSource}
                 onChange={(e) => setSelectedSource(e.target.value as any)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white appearance-none"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 appearance-none"
                 aria-label="Filter by source"
                 title="Filter by source"
               >
@@ -327,7 +327,7 @@ export default function RecycleBin() {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
-                className="w-full pl-10 pr-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-700 text-gray-900 dark:text-white appearance-none"
+                className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg bg-white text-gray-900 appearance-none"
                 aria-label="Sort by"
                 title="Sort by"
               >
@@ -352,12 +352,12 @@ export default function RecycleBin() {
         {/* Items List */}
         <div className="space-y-3">
           {filteredItems.length === 0 ? (
-            <div className="bg-white dark:bg-gray-800 rounded-lg p-12 text-center shadow-sm">
-              <Trash2 className="w-16 h-16 text-gray-300 dark:text-gray-600 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+            <div className="bg-white rounded-lg p-12 text-center shadow-sm">
+              <Trash2 className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 Recycle Bin is Empty
               </h3>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-gray-600">
                 {searchTerm || selectedSource !== "all"
                   ? "No items match your filters"
                   : "Deleted items will appear here"}
@@ -373,7 +373,7 @@ export default function RecycleBin() {
               return (
                 <div
                   key={item.id}
-                  className="bg-white dark:bg-gray-800 rounded-lg shadow-sm overflow-hidden"
+                  className="bg-white rounded-lg shadow-sm overflow-hidden"
                 >
                   <div className="p-4">
                     <div className="flex items-start gap-4">
@@ -390,10 +390,10 @@ export default function RecycleBin() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-start justify-between gap-4 mb-2">
                           <div className="flex-1">
-                            <h3 className="font-semibold text-gray-900 dark:text-white truncate">
+                            <h3 className="font-semibold text-gray-900 truncate">
                               {preview.title}
                             </h3>
-                            <p className="text-sm text-gray-600 dark:text-gray-400 line-clamp-2">
+                            <p className="text-sm text-gray-600 line-clamp-2">
                               {preview.description}
                             </p>
                           </div>
@@ -407,7 +407,7 @@ export default function RecycleBin() {
                         </div>
 
                         {/* Meta Info */}
-                        <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-gray-400 mb-3">
+                        <div className="flex items-center gap-4 text-xs text-gray-500 mb-3">
                           <span>
                             Deleted:{" "}
                             {new Date(item.deletedAt).toLocaleDateString()}
@@ -415,7 +415,7 @@ export default function RecycleBin() {
                           <span
                             className={
                               expiringSoon
-                                ? "text-red-600 dark:text-red-400 font-semibold"
+                                ? "text-red-600 font-semibold"
                                 : ""
                             }
                           >
@@ -463,7 +463,7 @@ export default function RecycleBin() {
                             onClick={() =>
                               setExpandedItem(isExpanded ? null : item.id)
                             }
-                            className="px-3 py-1.5 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 flex items-center gap-1 text-sm"
+                            className="px-3 py-1.5 bg-gray-200 text-gray-900 rounded-lg hover:bg-gray-300 flex items-center gap-1 text-sm"
                           >
                             {isExpanded ? "Hide" : "View"} Details
                           </button>
@@ -471,8 +471,8 @@ export default function RecycleBin() {
 
                         {/* Expanded Details */}
                         {isExpanded && (
-                          <div className="mt-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                            <pre className="text-xs text-gray-700 dark:text-gray-300 overflow-auto">
+                          <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+                            <pre className="text-xs text-gray-700 overflow-auto">
                               {JSON.stringify(item.data, null, 2)}
                             </pre>
                           </div>

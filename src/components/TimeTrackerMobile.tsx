@@ -262,8 +262,8 @@ export default function TimeTrackerMobile() {
   return (
     <div className="flex flex-col h-full">
       {/* Header */}
-      <div className="shrink-0 p-2.5 border-b light:border-gray-200 dark:border-white/10 light:bg-white dark:bg-white/5">
-        <h2 className="text-sm font-semibold flex items-center gap-2 light:text-gray-900 dark:text-white">
+      <div className="shrink-0 p-2.5 border-b border-gray-200 bg-white">
+        <h2 className="text-sm font-semibold flex items-center gap-2 text-gray-900">
           <Clock className="w-4 h-4 text-blue-600" />
           Time Tracker
         </h2>
@@ -272,10 +272,10 @@ export default function TimeTrackerMobile() {
       {/* Main Content - Scrollable */}
       <div className="flex-1 overflow-y-auto p-2.5 space-y-3">
         {/* Punch In/Out */}
-        <div className="light:bg-white dark:bg-white/5 p-2.5 rounded-lg border light:border-gray-200 dark:border-white/10">
+        <div className="bg-white p-2.5 rounded-lg border border-gray-200">
           <div className="flex items-center gap-2 mb-2">
             <LogIn className="w-3.5 h-3.5 text-green-600" />
-            <h3 className="text-xs font-semibold light:text-gray-900 dark:text-white">
+            <h3 className="text-xs font-semibold text-gray-900">
               Punch In
             </h3>
           </div>
@@ -287,7 +287,7 @@ export default function TimeTrackerMobile() {
             type="datetime-local"
             value={manualLoginTime}
             onChange={(e) => setManualLoginTime(e.target.value)}
-            className="w-full px-2 py-1.5 text-xs rounded border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white mb-2"
+            className="w-full px-2 py-1.5 text-xs rounded border border-gray-300 bg-white text-gray-900 mb-2"
           />
           <button
             onClick={handlePunchIn}
@@ -299,10 +299,10 @@ export default function TimeTrackerMobile() {
           </button>
         </div>
 
-        <div className="light:bg-white dark:bg-white/5 p-2.5 rounded-lg border light:border-gray-200 dark:border-white/10">
+        <div className="bg-white p-2.5 rounded-lg border border-gray-200">
           <div className="flex items-center gap-2 mb-2">
             <LogOut className="w-3.5 h-3.5 text-red-600" />
-            <h3 className="text-xs font-semibold light:text-gray-900 dark:text-white">
+            <h3 className="text-xs font-semibold text-gray-900">
               Punch Out
             </h3>
           </div>
@@ -314,7 +314,7 @@ export default function TimeTrackerMobile() {
             type="datetime-local"
             value={manualLogoutTime}
             onChange={(e) => setManualLogoutTime(e.target.value)}
-            className="w-full px-2 py-1.5 text-xs rounded border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white mb-2"
+            className="w-full px-2 py-1.5 text-xs rounded border border-gray-300 bg-white text-gray-900 mb-2"
           />
           <button
             onClick={handlePunchOut}
@@ -337,35 +337,35 @@ export default function TimeTrackerMobile() {
 
         {/* Statistics */}
         <div className="grid grid-cols-3 gap-2">
-          <div className="light:bg-blue-50 dark:bg-blue-900/20 p-2 rounded border light:border-blue-200 dark:border-blue-800/30">
-            <p className="text-[10px] font-medium light:text-blue-900 dark:text-blue-300 mb-0.5">
+          <div className="bg-blue-50 p-2 rounded border border-blue-200">
+            <p className="text-[10px] font-medium text-blue-900 mb-0.5">
               Total
             </p>
-            <p className="text-sm font-bold light:text-blue-900 dark:text-blue-100">
+            <p className="text-sm font-bold text-blue-900">
               {stats.totalHours}h
             </p>
           </div>
-          <div className="light:bg-purple-50 dark:bg-purple-900/20 p-2 rounded border light:border-purple-200 dark:border-purple-800/30">
-            <p className="text-[10px] font-medium light:text-purple-900 dark:text-purple-300 mb-0.5">
+          <div className="bg-purple-50 p-2 rounded border border-purple-200">
+            <p className="text-[10px] font-medium text-purple-900 mb-0.5">
               Avg
             </p>
-            <p className="text-sm font-bold light:text-purple-900 dark:text-purple-100">
+            <p className="text-sm font-bold text-purple-900">
               {stats.avgHours}h
             </p>
           </div>
-          <div className="light:bg-green-50 dark:bg-green-900/20 p-2 rounded border light:border-green-200 dark:border-green-800/30">
-            <p className="text-[10px] font-medium light:text-green-900 dark:text-green-300 mb-0.5">
+          <div className="bg-green-50 p-2 rounded border border-green-200">
+            <p className="text-[10px] font-medium text-green-900 mb-0.5">
               Sessions
             </p>
-            <p className="text-sm font-bold light:text-green-900 dark:text-green-100">
+            <p className="text-sm font-bold text-green-900">
               {stats.sessions}
             </p>
           </div>
         </div>
 
         {/* Date Range Filter */}
-        <div className="light:bg-white dark:bg-white/5 p-2.5 rounded-lg border light:border-gray-200 dark:border-white/10">
-          <h3 className="text-xs font-semibold light:text-gray-900 dark:text-white mb-2 flex items-center gap-1.5">
+        <div className="bg-white p-2.5 rounded-lg border border-gray-200">
+          <h3 className="text-xs font-semibold text-gray-900 mb-2 flex items-center gap-1.5">
             <Calendar className="w-3.5 h-3.5 text-blue-600" />
             Date Range
           </h3>
@@ -381,7 +381,7 @@ export default function TimeTrackerMobile() {
                 setDateRange({ ...dateRange, start: e.target.value })
               }
               placeholder="Start date"
-              className="w-full px-2 py-1.5 text-xs rounded border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white"
+              className="w-full px-2 py-1.5 text-xs rounded border border-gray-300 bg-white text-gray-900"
             />
             <label htmlFor="mobile-filter-end-date" className="sr-only">
               End Date
@@ -394,15 +394,15 @@ export default function TimeTrackerMobile() {
                 setDateRange({ ...dateRange, end: e.target.value })
               }
               placeholder="End date"
-              className="w-full px-2 py-1.5 text-xs rounded border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white"
+              className="w-full px-2 py-1.5 text-xs rounded border border-gray-300 bg-white text-gray-900"
             />
           </div>
         </div>
 
         {/* Daily Hours Chart - Below Date Filter */}
         {dailyData.length > 0 && (
-          <div className="light:bg-white dark:bg-white/5 p-2.5 rounded-lg border light:border-gray-200 dark:border-white/10">
-            <p className="text-xs font-medium light:text-gray-700 dark:text-gray-300 mb-2">
+          <div className="bg-white p-2.5 rounded-lg border border-gray-200">
+            <p className="text-xs font-medium text-gray-700 mb-2">
               Daily Hours (Last 7 Days)
             </p>
             <div className="flex items-end justify-between gap-1 h-20">
@@ -428,16 +428,16 @@ export default function TimeTrackerMobile() {
                           minHeight: day.hours > 0 ? "6px" : "0",
                         }}
                       >
-                        <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] font-bold light:text-gray-900 dark:text-white opacity-0 group-hover:opacity-100 transition-opacity bg-blue-500 text-white px-1.5 py-0.5 rounded whitespace-nowrap">
+                        <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] font-bold text-gray-900 opacity-0 group-hover:opacity-100 transition-opacity bg-blue-500 text-white px-1.5 py-0.5 rounded whitespace-nowrap">
                           {day.hours.toFixed(1)}h
                         </span>
                       </div>
                     </div>
                     <div className="text-center">
-                      <span className="text-[10px] font-medium light:text-gray-700 dark:text-gray-300 block">
+                      <span className="text-[10px] font-medium text-gray-700 block">
                         {dayName}
                       </span>
-                      <span className="text-[9px] light:text-gray-500 dark:text-gray-500">
+                      <span className="text-[9px] text-gray-500">
                         {dateNum}
                       </span>
                     </div>
@@ -449,18 +449,18 @@ export default function TimeTrackerMobile() {
         )}
 
         {/* Time Logs */}
-        <div className="light:bg-white dark:bg-white/5 p-2.5 rounded-lg border light:border-gray-200 dark:border-white/10">
-          <h3 className="text-xs font-semibold light:text-gray-900 dark:text-white mb-2 flex items-center gap-1.5">
+        <div className="bg-white p-2.5 rounded-lg border border-gray-200">
+          <h3 className="text-xs font-semibold text-gray-900 mb-2 flex items-center gap-1.5">
             <Clock className="w-3.5 h-3.5 text-blue-600" />
             Recent Logs
           </h3>
 
           {fetchingLogs ? (
-            <div className="text-center py-6 text-xs light:text-gray-600 dark:text-gray-400">
+            <div className="text-center py-6 text-xs text-gray-600">
               Loading...
             </div>
           ) : logs.length === 0 ? (
-            <div className="text-center py-6 text-xs light:text-gray-600 dark:text-gray-400">
+            <div className="text-center py-6 text-xs text-gray-600">
               No logs found
             </div>
           ) : (
@@ -468,7 +468,7 @@ export default function TimeTrackerMobile() {
               {logs.map((log) => (
                 <div
                   key={log.id}
-                  className="p-2 light:bg-gray-50 dark:bg-black/20 rounded border light:border-gray-200 dark:border-white/5"
+                  className="p-2 bg-gray-50 rounded border border-gray-200"
                 >
                   {editingId === log.id ? (
                     <div className="space-y-2">
@@ -484,7 +484,7 @@ export default function TimeTrackerMobile() {
                         value={editLogin}
                         onChange={(e) => setEditLogin(e.target.value)}
                         placeholder="Login time"
-                        className="w-full px-2 py-1 text-xs rounded border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white"
+                        className="w-full px-2 py-1 text-xs rounded border border-gray-300 bg-white text-gray-900"
                       />
                       <label
                         htmlFor={`mobile-edit-logout-${log.id}`}
@@ -498,7 +498,7 @@ export default function TimeTrackerMobile() {
                         value={editLogout}
                         onChange={(e) => setEditLogout(e.target.value)}
                         placeholder="Logout time"
-                        className="w-full px-2 py-1 text-xs rounded border light:border-gray-300 dark:border-white/10 light:bg-white dark:bg-black/20 light:text-gray-900 dark:text-white"
+                        className="w-full px-2 py-1 text-xs rounded border border-gray-300 bg-white text-gray-900"
                       />
                       <div className="flex gap-1.5">
                         <button
@@ -523,25 +523,25 @@ export default function TimeTrackerMobile() {
                     <>
                       <div className="space-y-1 mb-2">
                         <div>
-                          <p className="text-[10px] font-medium light:text-gray-600 dark:text-gray-400">
+                          <p className="text-[10px] font-medium text-gray-600">
                             Login
                           </p>
-                          <p className="text-xs font-semibold light:text-gray-900 dark:text-white">
+                          <p className="text-xs font-semibold text-gray-900">
                             {formatDisplayTime(log.loginTime)}
                           </p>
                         </div>
                         <div>
-                          <p className="text-[10px] font-medium light:text-gray-600 dark:text-gray-400">
+                          <p className="text-[10px] font-medium text-gray-600">
                             Logout
                           </p>
-                          <p className="text-xs font-semibold light:text-gray-900 dark:text-white">
+                          <p className="text-xs font-semibold text-gray-900">
                             {log.logoutTime
                               ? formatDisplayTime(log.logoutTime)
                               : "Not logged out"}
                           </p>
                         </div>
                         <div>
-                          <p className="text-[10px] font-medium light:text-gray-600 dark:text-gray-400">
+                          <p className="text-[10px] font-medium text-gray-600">
                             Duration
                           </p>
                           <p className="text-xs font-semibold text-blue-600">
@@ -555,7 +555,7 @@ export default function TimeTrackerMobile() {
                         <button
                           onClick={() => startEdit(log)}
                           disabled={loading}
-                          className="flex-1 p-1.5 light:bg-blue-100 dark:bg-blue-900/20 light:text-blue-700 dark:text-blue-400 rounded text-xs flex items-center justify-center gap-1"
+                          className="flex-1 p-1.5 bg-blue-100 text-blue-700 rounded text-xs flex items-center justify-center gap-1"
                         >
                           <Edit2 className="w-3 h-3" />
                           Edit
@@ -563,7 +563,7 @@ export default function TimeTrackerMobile() {
                         <button
                           onClick={() => handleDeleteLog(log.id)}
                           disabled={loading}
-                          className="flex-1 p-1.5 light:bg-red-100 dark:bg-red-900/20 light:text-red-700 dark:text-red-400 rounded text-xs flex items-center justify-center gap-1"
+                          className="flex-1 p-1.5 bg-red-100 text-red-700 rounded text-xs flex items-center justify-center gap-1"
                         >
                           <Trash2 className="w-3 h-3" />
                           Delete

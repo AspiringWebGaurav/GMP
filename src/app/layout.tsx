@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../styles/globals.css";
 import Providers from "../components/providers/ToasterProvider";
-import { ThemeProvider } from "../contexts/ThemeContext";
 import { NotificationProvider } from "../contexts/NotificationContext";
 import { RecycleBinProvider } from "../contexts/RecycleBinContext";
 
@@ -31,13 +30,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-surface text-foreground min-h-screen`}
       >
-        <ThemeProvider>
-          <NotificationProvider>
-            <RecycleBinProvider>
-              <Providers>{children}</Providers>
-            </RecycleBinProvider>
-          </NotificationProvider>
-        </ThemeProvider>
+        <NotificationProvider>
+          <RecycleBinProvider>
+            <Providers>{children}</Providers>
+          </RecycleBinProvider>
+        </NotificationProvider>
       </body>
     </html>
   );

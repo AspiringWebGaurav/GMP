@@ -44,7 +44,7 @@ export default function DesktopLogin() {
   };
 
   return (
-    <div className="min-h-svh flex flex-col light:bg-gray-50 dark:bg-surface">
+    <div className="min-h-svh flex flex-col bg-gray-50">
       <Breadcrumb />
       <div className="flex-1 flex flex-col lg:flex-row">
         {/* Left Branding Panel */}
