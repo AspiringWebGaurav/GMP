@@ -13,6 +13,7 @@ import {
   Calendar,
 } from "lucide-react";
 import { toast } from "sonner";
+import { useRecycleBin } from "@/contexts/RecycleBinContext";
 
 interface TimeLog {
   id: string;
@@ -24,6 +25,7 @@ interface TimeLog {
 }
 
 export default function TimeTrackerMobile() {
+  const { moveToRecycleBin } = useRecycleBin();
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [logs, setLogs] = useState<TimeLog[]>([]);
   const [manualLoginTime, setManualLoginTime] = useState("");
@@ -144,7 +146,10 @@ export default function TimeTrackerMobile() {
   };
 
   const handleDeleteLog = async (id: string) => {
-    if (!confirm("Delete this time log?")) return;
+    const logToDelete = logs.find((log) => log.id === id);
+    if (!logToDelete) return;
+
+    if (!confirm("Move this log to Recycle Bin?")) return;
 
     setLoading(true);
     try {
@@ -154,7 +159,7 @@ export default function TimeTrackerMobile() {
 
       if (!response.ok) throw new Error("Failed to delete log");
 
-      toast.success("Time log deleted");
+      await moveToRecycleBin("time-tracker", logToDelete, id);
       await fetchLogs();
     } catch (error) {
       console.error("Error deleting log:", error);

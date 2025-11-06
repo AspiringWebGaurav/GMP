@@ -25,6 +25,7 @@ import {
   createTimesheetNotification,
   createErrorNotification,
 } from "@/lib/notificationHelpers";
+import { useRecycleBin } from "@/contexts/RecycleBinContext";
 
 interface TimesheetEntry {
   id: string;
@@ -47,6 +48,7 @@ interface DayGroup {
 }
 
 export default function ModernTimesheetMobile() {
+  const { moveToRecycleBin } = useRecycleBin();
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [entries, setEntries] = useState<TimesheetEntry[]>([]);
   const [loading, setLoading] = useState(false);
@@ -175,7 +177,10 @@ export default function ModernTimesheetMobile() {
   };
 
   const handleDeleteEntry = async (id: string) => {
-    if (!confirm("Delete this entry?")) return;
+    const entryToDelete = entries.find((entry) => entry.id === id);
+    if (!entryToDelete) return;
+
+    if (!confirm("Move this entry to Recycle Bin?")) return;
 
     setLoading(true);
     try {
@@ -185,6 +190,7 @@ export default function ModernTimesheetMobile() {
 
       if (!response.ok) throw new Error("Failed to delete entry");
 
+      await moveToRecycleBin("timesheet", entryToDelete, id);
       await createTimesheetNotification("delete", { id });
       await fetchEntries();
     } catch (error: any) {

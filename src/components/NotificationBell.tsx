@@ -197,8 +197,8 @@ export default function NotificationBell() {
                           <h4
                             className={`text-xs sm:text-sm font-semibold truncate ${
                               notification.read
-                                ? "light:text-gray-700 dark:text-gray-300"
-                                : "light:text-gray-900 dark:text-white"
+                                ? "text-gray-300 light:text-gray-700"
+                                : "text-white light:text-gray-900"
                             }`}
                           >
                             {notification.title}
@@ -207,16 +207,16 @@ export default function NotificationBell() {
                             <div className="w-2 h-2 rounded-full bg-blue-500 shrink-0 mt-1"></div>
                           )}
                         </div>
-                        <p className="text-xs sm:text-sm light:text-gray-600 dark:text-gray-400 line-clamp-2 mb-2">
+                        <p className="text-xs sm:text-sm text-gray-400 light:text-gray-600 line-clamp-2 mb-2">
                           {notification.message}
                         </p>
                         <div className="flex items-center justify-between gap-2">
-                          <span className="text-[10px] sm:text-xs light:text-gray-500 dark:text-gray-500">
+                          <span className="text-[10px] sm:text-xs text-gray-500 light:text-gray-500">
                             {formatDistanceToNow(notification.createdAt)}
                           </span>
                           <button
                             onClick={(e) => handleDelete(e, notification.id)}
-                            className="p-1.5 rounded-md light:text-gray-500 dark:text-gray-500 light:hover:bg-red-50 dark:hover:bg-red-500/10 light:hover:text-red-600 dark:hover:text-red-400 transition-colors"
+                            className="p-1.5 rounded-md text-gray-500 light:hover:bg-red-50 hover:bg-red-500/10 light:hover:text-red-600 hover:text-red-400 transition-colors"
                             aria-label="Delete notification"
                           >
                             <Trash2 className="w-3 h-3 sm:w-3.5 sm:h-3.5" />

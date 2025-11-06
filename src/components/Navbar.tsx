@@ -1,7 +1,15 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { LogOut, User as UserIcon, Settings, Moon, Sun } from "lucide-react";
+import {
+  LogOut,
+  User as UserIcon,
+  Settings,
+  Moon,
+  Sun,
+  FileText,
+  Trash2,
+} from "lucide-react";
 import BrandLogo from "./BrandLogo";
 import NotificationBell from "./NotificationBell";
 import { signOut } from "@/lib/auth";
@@ -9,18 +17,24 @@ import { auth } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { useTheme } from "../contexts/ThemeContext";
+import { useRecycleBin } from "../contexts/RecycleBinContext";
 
 interface NavbarProps {
   showNotifications?: boolean;
+  onVersionNotesClick?: () => void;
 }
 
-export default function Navbar({ showNotifications = true }: NavbarProps) {
+export default function Navbar({
+  showNotifications = true,
+  onVersionNotesClick,
+}: NavbarProps) {
   const [currentTime, setCurrentTime] = useState<string>("");
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const [user, setUser] = useState<any>(null);
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
   const { theme, toggleTheme } = useTheme();
+  const { stats } = useRecycleBin();
 
   // Update clock every second
   useEffect(() => {
@@ -82,7 +96,11 @@ export default function Navbar({ showNotifications = true }: NavbarProps) {
       <div className="w-full px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-14 sm:h-16">
           {/* Left Section - Logo and Brand Name */}
-          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+          <button
+            onClick={() => router.push("/dashboard")}
+            className="flex items-center gap-2 sm:gap-3 shrink-0 hover:opacity-80 transition-opacity cursor-pointer"
+            aria-label="Go to Dashboard"
+          >
             <BrandLogo className="w-8 h-8 sm:w-10 sm:h-10 shrink-0" />
             <div className="flex flex-col leading-tight">
               <span className="font-semibold text-sm sm:text-base lg:text-lg bg-linear-to-r from-[#6EE7B7] to-[#3B82F6] bg-clip-text text-transparent whitespace-nowrap">
@@ -92,7 +110,7 @@ export default function Navbar({ showNotifications = true }: NavbarProps) {
                 Portfolio
               </span>
             </div>
-          </div>
+          </button>
 
           {/* Middle Section - Live Clock (IST) */}
           <div className="hidden md:flex items-center justify-center absolute left-1/2 transform -translate-x-1/2">
@@ -123,6 +141,23 @@ export default function Navbar({ showNotifications = true }: NavbarProps) {
             </button>
 
             {showNotifications && user && <NotificationBell />}
+
+            {/* Recycle Bin Button */}
+            {user && (
+              <button
+                onClick={() => router.push("/recycle-bin")}
+                className="relative p-2 rounded-lg light:bg-gray-100 dark:bg-white/5 border light:border-gray-200 dark:border-white/10 light:hover:bg-gray-200 dark:hover:bg-white/10 transition-all duration-200"
+                aria-label="Recycle Bin"
+                title="Recycle Bin"
+              >
+                <Trash2 className="w-4 h-4 sm:w-5 sm:h-5 light:text-gray-700 dark:text-gray-300" />
+                {stats.total > 0 && (
+                  <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-600 text-white text-xs font-bold rounded-full flex items-center justify-center">
+                    {stats.total > 9 ? "9+" : stats.total}
+                  </span>
+                )}
+              </button>
+            )}
 
             {user && (
               <div className="relative" ref={profileMenuRef}>
@@ -171,6 +206,18 @@ export default function Navbar({ showNotifications = true }: NavbarProps) {
                       >
                         <UserIcon className="w-4 h-4" />
                         <span>Profile</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowProfileMenu(false);
+                          if (onVersionNotesClick) {
+                            onVersionNotesClick();
+                          }
+                        }}
+                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-white/5 hover:text-white transition-colors"
+                      >
+                        <FileText className="w-4 h-4" />
+                        <span>Version Notes</span>
                       </button>
                       <button
                         onClick={() => {

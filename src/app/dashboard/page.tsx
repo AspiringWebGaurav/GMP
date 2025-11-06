@@ -14,14 +14,16 @@ import TimeTracker from "../../components/TimeTracker";
 import TimeTrackerMobile from "../../components/TimeTrackerMobile";
 import ModernTimesheet from "../../components/ModernTimesheet";
 import ModernTimesheetMobile from "../../components/ModernTimesheetMobile";
+import TodoList from "../../components/TodoList";
+import TodoListMobile from "../../components/TodoListMobile";
 
 export default function DashboardPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [authorized, setAuthorized] = useState(false);
-  const [activeTab, setActiveTab] = useState<"login" | "version" | "timesheet">(
-    "login"
-  );
+  const [activeTab, setActiveTab] = useState<
+    "login" | "version" | "timesheet" | "todo"
+  >("login");
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [tabLoaded, setTabLoaded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
@@ -93,11 +95,12 @@ export default function DashboardPage() {
   const menuItems = [
     { id: "login" as const, label: "Login/Logout", icon: "🔐" },
     { id: "timesheet" as const, label: "Timesheet", icon: "⏰" },
-    { id: "version" as const, label: "Version Notes", icon: "📝" },
+    { id: "todo" as const, label: "TODO List", icon: "✅" },
   ];
 
   // Get current active tab label
   const getActiveTabLabel = () => {
+    if (activeTab === "version") return "Version Notes";
     const activeItem = menuItems.find((item) => item.id === activeTab);
     return activeItem?.label || "";
   };
@@ -122,6 +125,12 @@ export default function DashboardPage() {
             {isMobile ? <ModernTimesheetMobile /> : <ModernTimesheet />}
           </div>
         );
+      case "todo":
+        return (
+          <div className="h-full flex flex-col overflow-hidden">
+            {isMobile ? <TodoListMobile /> : <TodoList />}
+          </div>
+        );
       default:
         return null;
     }
@@ -130,7 +139,7 @@ export default function DashboardPage() {
   return (
     <div className="h-screen flex flex-col bg-surface overflow-hidden">
       <div className="shrink-0">
-        <Navbar />
+        <Navbar onVersionNotesClick={() => setActiveTab("version")} />
         <Breadcrumb activeTab={getActiveTabLabel()} />
       </div>
       <main className="flex-1 flex flex-col md:flex-row overflow-hidden min-h-0">

@@ -2,6 +2,7 @@ export type NotificationType =
   | "login"
   | "logout"
   | "timesheet"
+  | "todo"
   | "version"
   | "system"
   | "error"

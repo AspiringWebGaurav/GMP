@@ -8,6 +8,7 @@ import {
   createTimesheetNotification,
   createErrorNotification,
 } from "@/lib/notificationHelpers";
+import { useRecycleBin } from "@/contexts/RecycleBinContext";
 
 interface TimeLog {
   id: string;
@@ -19,6 +20,7 @@ interface TimeLog {
 }
 
 export default function TimeTracker() {
+  const { moveToRecycleBin } = useRecycleBin();
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [manualLoginTime, setManualLoginTime] = useState("");
   const [manualLogoutTime, setManualLogoutTime] = useState("");
@@ -167,16 +169,22 @@ export default function TimeTracker() {
   };
 
   const handleDeleteLog = async (id: string) => {
-    if (!confirm("Delete this log?")) return;
+    const logToDelete = logs.find((log) => log.id === id);
+    if (!logToDelete) return;
+
+    if (!confirm("Move this log to Recycle Bin?")) return;
 
     setLoading(true);
     try {
+      // First delete from backend
       const response = await fetch(`/api/time-logs?id=${id}`, {
         method: "DELETE",
       });
 
       if (!response.ok) throw new Error("Failed to delete log");
 
+      // Move to recycle bin
+      await moveToRecycleBin("time-tracker", logToDelete, id);
       await createTimesheetNotification("delete", { id });
       await fetchLogs();
     } catch (error: any) {

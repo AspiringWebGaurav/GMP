@@ -138,6 +138,57 @@ export async function createVersionNotification(
   });
 }
 
+export async function createTodoNotification(
+  action: "complete" | "create" | "update" | "delete",
+  data?: any
+) {
+  if (!notificationService) return;
+
+  const timestamp = new Date().toLocaleString("en-US", {
+    timeZone: "Asia/Kolkata",
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+
+  let title = "";
+  let message = "";
+  let toastMessage = "";
+
+  switch (action) {
+    case "complete":
+      title = "Task Completed! 🎉";
+      message = `"${data?.title || "Task"}" was completed at ${timestamp}`;
+      toastMessage = `Great job! Task completed: ${data?.title || "Task"}`;
+      notificationService.showToast("success", toastMessage);
+      break;
+    case "create":
+      title = "Task Created";
+      message = `New task "${data?.title || "Task"}" created at ${timestamp}`;
+      toastMessage = "Task added successfully";
+      notificationService.showToast("success", toastMessage);
+      break;
+    case "update":
+      title = "Task Updated";
+      message = `Task "${data?.title || "Task"}" updated at ${timestamp}`;
+      toastMessage = "Task updated successfully";
+      notificationService.showToast("success", toastMessage);
+      break;
+    case "delete":
+      title = "Task Deleted";
+      message = `Task "${data?.title || "Task"}" deleted at ${timestamp}`;
+      toastMessage = "Task deleted successfully";
+      notificationService.showToast("success", toastMessage);
+      break;
+  }
+
+  await notificationService.createNotification({
+    type: "todo",
+    title,
+    message,
+    data: data || {},
+  });
+}
+
 export async function createErrorNotification(error: string, context?: string) {
   if (!notificationService) return;
 
