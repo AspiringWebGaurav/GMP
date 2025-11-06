@@ -2,10 +2,8 @@
 
 import React, { useState } from "react";
 import BrandLogo from "../../../components/BrandLogo";
-import Breadcrumb from "../../../components/Breadcrumb";
 import { motion, useReducedMotion } from "framer-motion";
 import { signInWithGoogle } from "../../../lib/auth";
-import Footer from "../../../components/Footer";
 import { useRouter } from "next/navigation";
 import { Sparkles, Shield, Zap } from "lucide-react";
 import { useLoading } from "../../../contexts/LoadingContext";
@@ -48,8 +46,7 @@ export default function DesktopLogin() {
   };
 
   return (
-    <div className="min-h-svh flex flex-col bg-gray-50">
-      <Breadcrumb />
+    <div className="min-h-svh flex flex-col bg-linear-to-br from-gray-900 via-gray-800 to-gray-900">
       <div className="flex-1 flex flex-col lg:flex-row">
         {/* Left Branding Panel */}
         <div className="hidden lg:flex w-1/2 items-center justify-center bg-linear-to-br from-sky-600 via-indigo-600 to-violet-700 p-12 relative overflow-hidden">
@@ -122,12 +119,12 @@ export default function DesktopLogin() {
         {/* Right Auth Panel */}
         <div className="w-full lg:w-1/2 flex items-center justify-center p-6">
           <div className="w-full max-w-md">
-            <div className="bg-zinc-900/40 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-zinc-800/50">
+            <div className="bg-gray-800/50 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-gray-700/50">
               <div className="text-center mb-8">
                 <h2 className="text-3xl font-bold mb-2 bg-clip-text text-transparent bg-linear-to-r from-sky-400 to-indigo-400">
                   Sign in to GMP
                 </h2>
-                <p className="text-sm text-zinc-400">
+                <p className="text-sm text-gray-300">
                   Only authorized users may access
                 </p>
               </div>
@@ -135,7 +132,7 @@ export default function DesktopLogin() {
               <button
                 onClick={handleGoogleSignIn}
                 disabled={loading}
-                className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-white hover:bg-gray-50 text-gray-800 rounded-xl font-medium transition-all disabled:opacity-60 disabled:cursor-not-waiting shadow-lg hover:shadow-xl"
+                className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-white hover:bg-gray-50 text-gray-800 rounded-xl font-medium transition-all disabled:opacity-60 disabled:cursor-not-allowed shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98]"
               >
                 <svg className="w-5 h-5" viewBox="0 0 24 24">
                   <path
@@ -159,7 +156,7 @@ export default function DesktopLogin() {
               </button>
 
               <div className="mt-6 text-center">
-                <p className="text-xs text-zinc-500">
+                <p className="text-xs text-gray-400">
                   By signing in, you agree to the terms of this personal-use
                   application.
                 </p>
@@ -169,10 +166,24 @@ export default function DesktopLogin() {
         </div>
       </div>
 
-      {/* Footer at bottom */}
-      <div className="mt-auto">
-        <Footer />
-      </div>
+      {/* Custom Dark Footer */}
+      <footer className="w-full border-t border-gray-700/50 bg-gray-900/50 backdrop-blur-lg">
+        <div className="w-full px-6 py-3">
+          <div className="flex items-center justify-between w-full text-gray-400 text-xs">
+            <div className="flex items-center gap-2">
+              <Shield className="w-3.5 h-3.5 text-gray-500" />
+              <span>© {new Date().getFullYear()} GMP — Personal use only</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+              </span>
+              <span>Secure & Private</span>
+            </div>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }

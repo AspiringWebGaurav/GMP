@@ -1,18 +1,39 @@
 "use client";
 
-import React, { useState } from "react";
-import Link from "next/link";
+import React, { useState, useEffect } from "react";
 import BrandLogo from "../../../components/BrandLogo";
-import Breadcrumb from "../../../components/Breadcrumb";
-import Footer from "../../../components/Footer";
 import { signInWithGoogle } from "../../../lib/auth";
 import { useRouter } from "next/navigation";
 import { useLoading } from "../../../contexts/LoadingContext";
+import { Shield } from "lucide-react";
 
 export default function MobileLogin() {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
   const { withLoading } = useLoading();
+
+  // Prevent pull-to-refresh and scrolling on mobile
+  useEffect(() => {
+    const preventDefault = (e: TouchEvent) => {
+      if (e.touches.length > 1) return; // Allow pinch zoom
+      e.preventDefault();
+    };
+
+    document.body.style.overflow = 'hidden';
+    document.body.style.position = 'fixed';
+    document.body.style.width = '100%';
+    document.body.style.height = '100%';
+    
+    document.addEventListener('touchmove', preventDefault, { passive: false });
+
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.width = '';
+      document.body.style.height = '';
+      document.removeEventListener('touchmove', preventDefault);
+    };
+  }, []);
 
   const handleGoogleSignIn = async () => {
     setLoading(true);
@@ -29,39 +50,37 @@ export default function MobileLogin() {
   };
 
   return (
-    <div className="min-h-svh flex flex-col bg-gray-50">
-      <Breadcrumb />
-      <div className="flex-1 flex flex-col p-4 justify-between">
-        <div>
-          {/* Branding */}
-          <div className="mb-6">
-            <div className="flex items-center gap-3 mb-3">
-              <BrandLogo className="w-14 h-14" />
-              <div>
-                <h1 className="text-2xl font-bold bg-linear-to-r from-[#6366F1] via-[#8B5CF6] to-[#3B82F6] bg-clip-text text-transparent">
-                  Gaurav Management Panel
-                </h1>
-              </div>
+    <div className="h-svh flex flex-col bg-linear-to-br from-gray-900 via-gray-800 to-gray-900 overflow-hidden fixed inset-0 w-full overscroll-none">
+      <div className="flex-1 flex flex-col p-4 justify-between min-h-0 overflow-hidden overscroll-none">
+        {/* Branding */}
+        <div className="mb-4 shrink-0">
+          <div className="flex items-center gap-3 mb-2">
+            <BrandLogo className="w-10 h-10" />
+            <div>
+              <h1 className="text-lg font-bold bg-linear-to-r from-[#6366F1] via-[#8B5CF6] to-[#3B82F6] bg-clip-text text-transparent">
+                Gaurav Management Panel
+              </h1>
             </div>
-            <p className="text-sm text-zinc-300 leading-relaxed">
-              Secure control panel for personal management — authorized access
-              only.
-            </p>
           </div>
+          <p className="text-xs text-gray-300 leading-relaxed">
+            Secure control panel for personal management — authorized access
+            only.
+          </p>
+        </div>
 
-          {/* Auth Card */}
-          <div className="w-full bg-zinc-900/40 backdrop-blur-xl rounded-2xl p-6 border border-zinc-800/50 shadow-xl">
-            <h2 className="text-xl font-semibold mb-2 bg-clip-text text-transparent bg-linear-to-r from-sky-400 to-indigo-400">
-              Sign in to GMP
-            </h2>
-            <p className="text-xs text-zinc-400 mb-6">
-              Only authorized users may access.
-            </p>
+        {/* Auth Card */}
+        <div className="w-full bg-gray-800/50 backdrop-blur-xl rounded-2xl p-5 border border-gray-700/50 shadow-xl shrink-0">
+          <h2 className="text-lg font-semibold mb-1 bg-clip-text text-transparent bg-linear-to-r from-sky-400 to-indigo-400">
+            Sign in to GMP
+          </h2>
+          <p className="text-xs text-gray-300 mb-4">
+            Only authorized users may access.
+          </p>
 
             <button
               onClick={handleGoogleSignIn}
               disabled={loading}
-              className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white hover:bg-gray-50 text-gray-800 rounded-xl font-medium transition-all disabled:opacity-60 shadow-lg"
+              className="w-full flex items-center justify-center gap-3 px-4 py-3 bg-white hover:bg-gray-50 text-gray-800 rounded-xl font-medium transition-all disabled:opacity-60 disabled:cursor-not-allowed shadow-lg active:scale-[0.98]"
             >
               <svg className="w-5 h-5" viewBox="0 0 24 24">
                 <path
@@ -81,17 +100,30 @@ export default function MobileLogin() {
                   d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
                 />
               </svg>
-              {loading ? "Signing in..." : "Continue with Google"}
-            </button>
+            {loading ? "Signing in..." : "Continue with Google"}
+          </button>
 
-            <p className="text-xs text-zinc-500 mt-4 text-center">
-              Sign in with your authorized Google account
-            </p>
-          </div>
+          <p className="text-xs text-gray-400 mt-3 text-center">
+            Sign in with your authorized Google account
+          </p>
         </div>
 
-        {/* Footer */}
-        <Footer />
+        {/* Custom Dark Footer - Mobile */}
+        <footer className="w-full pt-4 pb-2 shrink-0">
+          <div className="flex flex-col items-center gap-2 text-gray-400 text-xs">
+            <div className="flex items-center gap-2">
+              <Shield className="w-3 h-3 text-gray-500" />
+              <span>© {new Date().getFullYear()} GMP — Personal use only</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="relative flex h-2 w-2">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+              </span>
+              <span>Secure & Private</span>
+            </div>
+          </div>
+        </footer>
       </div>
     </div>
   );
