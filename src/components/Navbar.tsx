@@ -94,16 +94,15 @@ export default function Navbar({
           {/* Left Section - Logo and Brand Name */}
           <button
             onClick={() => router.push("/dashboard")}
-            className="flex items-center gap-2 sm:gap-3 shrink-0 hover:opacity-80 transition-opacity cursor-pointer"
+            className="flex items-center gap-2 sm:gap-3 shrink-0 hover:opacity-90 transition-opacity cursor-pointer group"
             aria-label="Go to Dashboard"
           >
-            <BrandLogo className="w-8 h-8 sm:w-10 sm:h-10 shrink-0" />
+            <div className="shrink-0">
+              <BrandLogo className="w-8 h-8 sm:w-10 sm:h-10" />
+            </div>
             <div className="flex flex-col leading-tight">
-              <span className="font-semibold text-sm sm:text-base lg:text-lg bg-linear-to-r from-[#6EE7B7] to-[#3B82F6] bg-clip-text text-transparent whitespace-nowrap">
-                Gaurav Management
-              </span>
-              <span className="hidden sm:block text-xs text-gray-600">
-                Portfolio
+              <span className="font-bold text-sm sm:text-base lg:text-lg bg-linear-to-r from-[#6366F1] via-[#8B5CF6] to-[#3B82F6] bg-clip-text text-transparent whitespace-nowrap group-hover:from-[#7C3AED] group-hover:to-[#2563EB] transition-all">
+                Gaurav Management Panel
               </span>
             </div>
           </button>

@@ -67,8 +67,9 @@ export default function DesktopLogin() {
             >
               <BrandLogo className="w-16 h-16" />
               <div>
-                <h1 className="text-4xl font-bold tracking-tight">GMP</h1>
-                <p className="text-sky-100 text-lg">management portfolio</p>
+                <h1 className="text-4xl font-bold tracking-tight">
+                  Gaurav Management Panel
+                </h1>
               </div>
             </motion.div>
 

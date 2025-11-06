@@ -16,8 +16,29 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Gaurav Management Portfolio",
-  description: "GMP - management portfolio",
+  title: "Gaurav Management Panel",
+  description:
+    "Professional management dashboard for tracking tasks, time, and productivity - GMP",
+  icons: {
+    icon: "/icon",
+    apple: "/apple-icon",
+  },
+  applicationName: "Gaurav Management Panel",
+  keywords: [
+    "management",
+    "dashboard",
+    "productivity",
+    "time tracker",
+    "task management",
+  ],
+  authors: [{ name: "Gaurav" }],
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
+  themeColor: "#6366F1",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "GMP",
+  },
 };
 
 export default function RootLayout({

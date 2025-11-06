@@ -34,8 +34,9 @@ export default function MobileLogin() {
             <div className="flex items-center gap-3 mb-3">
               <BrandLogo className="w-14 h-14" />
               <div>
-                <h1 className="text-2xl font-bold">GMP</h1>
-                <p className="text-sm text-zinc-400">management portfolio</p>
+                <h1 className="text-2xl font-bold bg-linear-to-r from-[#6366F1] via-[#8B5CF6] to-[#3B82F6] bg-clip-text text-transparent">
+                  Gaurav Management Panel
+                </h1>
               </div>
             </div>
             <p className="text-sm text-zinc-300 leading-relaxed">

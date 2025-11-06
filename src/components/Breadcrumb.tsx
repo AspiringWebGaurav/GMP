@@ -73,7 +73,7 @@ export default function Breadcrumb({
 
   return (
     <nav className="bg-gray-50/50 border-b border-gray-200">
-      <div className="px-4 md:px-6 py-2.5">
+      <div className="px-4 md:px-6 py-1.5 md:py-2.5">
         <ol className="flex items-center gap-1 text-xs overflow-x-auto scrollbar-hide">
           {breadcrumbs.map((crumb, index) => {
             const isLast = index === breadcrumbs.length - 1;
