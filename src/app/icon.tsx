@@ -1,5 +1,7 @@
 import { ImageResponse } from "next/og";
 
+export const revalidate = 86400;
+
 // Image metadata
 export const size = {
   width: 32,
