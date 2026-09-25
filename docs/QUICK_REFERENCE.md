@@ -285,7 +285,6 @@ const dailyStats = logs
 - **Full Guide**: `docs/TIME_TRACKER_GUIDE.md`
 - **Deployment**: `docs/DEPLOYMENT_CHECKLIST.md`
 - **Visual Guide**: `docs/VISUAL_INTERFACE_GUIDE.md`
-- **Summary**: `docs/TIME_TRACKER_SUMMARY.md`
 - **This Card**: `docs/QUICK_REFERENCE.md`
 
 ---
