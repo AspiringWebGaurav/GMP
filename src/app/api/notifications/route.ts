@@ -12,6 +12,7 @@ import {
   doc,
   writeBatch,
   Timestamp,
+  limit,
 } from "firebase/firestore";
 
 // GET - Fetch notifications for a user
@@ -31,7 +32,8 @@ export async function GET(request: NextRequest) {
     const q = query(
       notificationsRef,
       where("userId", "==", userId),
-      orderBy("createdAt", "desc")
+      orderBy("createdAt", "desc"),
+      limit(100)
     );
 
     const snapshot = await getDocs(q);

@@ -31,7 +31,7 @@ export async function GET(request: NextRequest) {
     // Add timeout for Firestore query
     const queryPromise = getDocs(q);
     const timeoutPromise = new Promise((_, reject) =>
-      setTimeout(() => reject(new Error("Query timeout")), 15000)
+      setTimeout(() => reject(new Error("Query timeout")), 8000)
     );
 
     const querySnapshot = (await Promise.race([
