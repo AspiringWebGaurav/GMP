@@ -16,7 +16,8 @@ import { createAuthNotification } from "./notificationHelpers";
 // Export auth for use in other components
 export { auth };
 
-const ALLOWED_EMAIL = "gauravpatil9262@gmail.com";
+export const ALLOWED_EMAIL =
+  process.env.NEXT_PUBLIC_ALLOWED_EMAIL || "gauravpatil5737@gmail.com";
 
 // Google Sign-In
 export async function signInWithGoogle(): Promise<UserCredential> {

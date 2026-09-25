@@ -295,7 +295,7 @@ src/
 **1. Email Gating**
 
 ```typescript
-const ALLOWED_EMAIL = "gauravpatil9262@gmail.com";
+const ALLOWED_EMAIL = "gauravpatil5737@gmail.com";
 ```
 
 - Single authorized user (owner only)
@@ -310,7 +310,7 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     match /{document=**} {
-      allow read, write: if request.auth.token.email == 'gauravpatil9262@gmail.com';
+      allow read, write: if request.auth.token.email == 'gauravpatil5737@gmail.com';
     }
   }
 }
@@ -337,7 +337,7 @@ User Login Attempt
     ↓
 Email/Google Auth
     ↓
-Email Validation (gauravpatil9262@gmail.com)
+Email Validation (gauravpatil5737@gmail.com)
     ↓
 Session Creation
     ↓
@@ -921,7 +921,7 @@ https://github.com/gauravpatil9262/gaurav-management-panel
 
 **Gaurav Patil**
 
-- **Email**: gauravpatil9262@gmail.com
+- **Email**: gauravpatil5737@gmail.com
 - **GitHub**: [@gauravpatil9262](https://github.com/gauravpatil9262)
 - **LinkedIn**: [Gaurav Patil](https://linkedin.com/in/gauravpatil9262)
 - **Portfolio**: Coming Soon

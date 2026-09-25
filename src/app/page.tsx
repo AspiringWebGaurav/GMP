@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { initAuthListener } from "../lib/auth";
+import { initAuthListener, ALLOWED_EMAIL } from "../lib/auth";
 import type { User } from "firebase/auth";
 import { useLoading } from "@/contexts/LoadingContext";
 
@@ -15,7 +15,7 @@ export default function Home() {
 
     // Client redirect fallback: initialize auth listener and redirect accordingly
     const unsub = initAuthListener((user: User | null) => {
-      if (user && user.email === "gauravpatil9262@gmail.com") {
+      if (user && user.email?.toLowerCase() === ALLOWED_EMAIL.toLowerCase()) {
         router.replace("/dashboard");
       } else {
         router.replace("/login");

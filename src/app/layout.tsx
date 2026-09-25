@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "../styles/globals.css";
 import Providers from "../components/providers/ToasterProvider";
@@ -17,6 +17,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 1,
+  themeColor: "#6366F1",
+};
+
 export const metadata: Metadata = {
   title: "Gaurav Management Panel",
   description:
@@ -34,8 +41,6 @@ export const metadata: Metadata = {
     "task management",
   ],
   authors: [{ name: "Gaurav" }],
-  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
-  themeColor: "#6366F1",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
